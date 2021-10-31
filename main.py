@@ -32,11 +32,51 @@ def shoot(playerShotAt, x, y) :
 # Function to convert ordered pair needed from command line to array elements.
 # Ordered pairs are allowed to range from (A, 1) to (H, 8)
 # This should not be needed once point and click is functional in py game.
-def convertShotToElements(shot) :
-    if shot[0] == "(" and shot[2] == "," and shot[3] == " " and shot[5] == ")" and shot[1] >= 'A' and shot[1] <= 'H' and shot[4] >= '1' and shot[4] <= '8' :
-        return ord(shot[1]) - 65, ord(shot[4]) - 49
-    else :
-        return -1, -1
+#def convertShotToElements(shot) :
+#   if shot[0] == "(" and shot[2] == "," and shot[3] == " " and shot[5] == ")" and shot[1] >= 'A' and shot[1] <= 'H' and shot[4] >= '1' and shot[4] <= '8' :
+#        return ord(shot[1]) - 65, ord(shot[4]) - 49
+#    else :
+#        return -1, -1
+
+
+def getRow(): #Function to get user input for row coordinate
+    good = False
+    row_data = 0
+    while(good == False):
+        row = input("Set the row (y) coordinate you would like to shoot at. Can be 'A' to 'h' or '1' to '8': ")
+        if (len(row) > 1):
+            good = False
+        else:
+            if ((ord(row) >= 65) and (ord(row) <= 72)):
+                row_data = ord(row) - 65
+                good = True
+            elif ((ord(row) >= 97) and (ord(row) <= 104)):
+                row_data = ord(row) - 97
+                good = True
+            elif ((ord(row) >= 49) and (ord(row) <= 56)):
+                row_data = ord(row) - 49
+                good = True
+            else:
+                good = False
+
+    return row_data
+
+def getCol(): #Function to get user input for column coordinate
+    good = False
+    col_data = 0
+    while(good == False):
+        col = input("Set the column (x) coordinate you would like to shoot at. Can be '1' to '8': ")
+        if (len(col) > 1):
+            good = False
+        else:
+            if ((ord(col) >= 49) and (ord(col) <= 56)):
+                col_data = ord(col) - 49
+                good = True
+            else:
+                good = False
+
+    return col_data
+    
 
 def main() :
     turn_num = 0        #Number of turns played
@@ -61,8 +101,9 @@ def main() :
         computer.board.printDisplayBoard()
 
         while(reshoot == True):
-            shot = input("Enter the cooridinate you would like to shoot at. Ex (B, 4)")
-            x, y = convertShotToElements(shot)
+            #shot = input("Enter the cooridinate you would like to shoot at. Ex (B, 4)")
+            x = getRow()
+            y = getCol()   #Yes x and y are backwards. It makes sense on board
             if x != -1 :
                 if (computer.board.checkCoordDouble(x, y) == True):
                     print("You have already shot there. Please try again.")
@@ -96,7 +137,7 @@ def main() :
             
     print("You sunk", computer.board.checkDestroyList(), "enemy ships in", turn_num, "turns.\n")
     accuracy = computer.board.calcAccuracy()
-    print("You had an accuracy of", round(accuracy[3], 2), "with", accuracy[0], "hits,", accuracy[1], "misses, and", accuracy[2], "total shots.") 
+    print("You had an accuracy of", round((accuracy[3] * 100),2), "% with", accuracy[0], "hits,", accuracy[1], "misses, and", accuracy[2], "total shots.") 
     
 
 if __name__ == "__main__":
