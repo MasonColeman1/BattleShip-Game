@@ -26,10 +26,14 @@ class Ship:
         return self.destroyed
 
     def checkDestroy(self, posit_list):  #Used to update whether ship is destroyed
-        result = all(elem in posit_list  for elem in self.positions)
+        result = 0
+        for p in posit_list:
+            for q in self.positions:
+                if(p==q):
+                    result += 1
 
-        if (result):
-            destroyed = True
+        if (result >= self.size):
+            self.destroyed = True
 
 
         #Called during ship placement to ensure ships are not placed over each other
@@ -42,6 +46,6 @@ class Ship:
 
     def printPosit(self):   #Called when board debug prints locations of ships
         for p in range(len(self.positions)):
-            print(self.positions[p], end="")
+            print("[",self.positions[p][0]+1,",",self.positions[p][1]+1,"]", end="")
             print()
             
