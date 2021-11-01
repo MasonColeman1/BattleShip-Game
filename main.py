@@ -43,17 +43,21 @@ def getRow(): #Function to get user input for row coordinate
     good = False
     row_data = 0
     while(good == False):
-        row = input("Set the row (y) coordinate you would like to shoot at. Can be 'A' to 'h' or '1' to '8': ")
+        row = input("Set the row (y) coordinate you would like to shoot at. Can be 'A' to 'h' or '1' to '10': ")
         if (len(row) > 1):
-            good = False
+            if((ord(row[0])==49) and (ord(row[1])==48)):
+                row_data = 9
+                good = True
+            else:
+                good = False
         else:
-            if ((ord(row) >= 65) and (ord(row) <= 72)):
+            if ((ord(row) >= 65) and (ord(row) <= 74)):
                 row_data = ord(row) - 65
                 good = True
-            elif ((ord(row) >= 97) and (ord(row) <= 104)):
+            elif ((ord(row) >= 97) and (ord(row) <= 106)):
                 row_data = ord(row) - 97
                 good = True
-            elif ((ord(row) >= 49) and (ord(row) <= 56)):
+            elif ((ord(row) >= 49) and (ord(row) <= 58)):
                 row_data = ord(row) - 49
                 good = True
             else:
@@ -65,11 +69,15 @@ def getCol(): #Function to get user input for column coordinate
     good = False
     col_data = 0
     while(good == False):
-        col = input("Set the column (x) coordinate you would like to shoot at. Can be '1' to '8': ")
+        col = input("Set the column (x) coordinate you would like to shoot at. Can be '1' to '10': ")
         if (len(col) > 1):
-            good = False
+            if((ord(col[0])==49) and (ord(col[1])==48)):
+                col_data = 9
+                good = True
+            else:
+                good = False
         else:
-            if ((ord(col) >= 49) and (ord(col) <= 56)):
+            if ((ord(col) >= 49) and (ord(col) <= 57)):
                 col_data = ord(col) - 49
                 good = True
             else:
