@@ -12,23 +12,27 @@ class Board :
     ship_list = []
     posit_list = []
     
-    board = [[0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0]]
+    board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-    display_board = [[" O", " O", " O", " O", " O", " O", " O", " O"],
-                     [" O", " O", " O", " O", " O", " O", " O", " O"],
-                     [" O", " O", " O", " O", " O", " O", " O", " O"],
-                     [" O", " O", " O", " O", " O", " O", " O", " O"],
-                     [" O", " O", " O", " O", " O", " O", " O", " O"],
-                     [" O", " O", " O", " O", " O", " O", " O", " O"],
-                     [" O", " O", " O", " O", " O", " O", " O", " O"],
-                     [" O", " O", " O", " O", " O", " O", " O", " O"]]
+    display_board = [[" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                     [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                     [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                     [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                     [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                     [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                     [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                     [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                     [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                     [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"]]
 
     def bulletShot(self, x, y) :
         self.posit_list.append([x,y])
@@ -79,12 +83,12 @@ class Board :
             while((check) or (redo)):
                 temp.positions = [] #Reset temp positions in case of redo or recheck
                 
-                rand_row = random.randint(0,7)
-                rand_col = random.randint(0,7)
+                rand_row = random.randint(0,9)
+                rand_col = random.randint(0,9)
 
                 #Add Positions
                 if (temp.orientation == "Vertical"): #Vertical Ships
-                    if (rand_row > 3):
+                    if (rand_row > 4):
                         for v in range(temp.size):
                             temp.positions.append([rand_row - v, rand_col])
                             if v < 0:
@@ -94,12 +98,12 @@ class Board :
                     else:
                         for v in range(temp.size):
                             temp.positions.append([rand_row + v, rand_col])
-                            if v > 7:
+                            if v > 9:
                                 redo = True
                             else:
                                 redo = False
                 else: #Horizontal Ships
-                    if (rand_col > 3):
+                    if (rand_col > 4):
                         for v in range(temp.size):
                             temp.positions.append([rand_row, rand_col - v])
                             if v < 0:
@@ -109,7 +113,7 @@ class Board :
                     else:
                         for v in range(temp.size):
                             temp.positions.append([rand_row, rand_col + v])
-                            if v > 7:
+                            if v > 9:
                                 redo = True
                             else:
                                 redo = False
@@ -149,12 +153,12 @@ class Board :
                     self.display_board[r][c] = " M"
 
     def printDisplayBoard(self): #Prints the display version of the board
-        letter_list = ["A", "B", "C", "D", "E", "F", "G", "H"]
-        print("  1 2 3 4 5 6 7 8")
+        letter_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+        print("  1 2 3 4 5 6 7 8 9 10")
         for r in range(len(self.display_board)):
             print(letter_list[r], end="")
             for c in range(len(self.display_board)):
-                if c != 7:
+                if c != 9:
                     print(self.display_board[r][c], end="")
                 else:
                     print(self.display_board[r][c], end='\n')
