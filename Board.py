@@ -5,7 +5,7 @@ import random
 # than integers. Maybe something like ship.
 class Board :
 
-    ship_num = 4
+    ship_num = 5
     max_ship_size = 5
     min_ship_size = 2
 
@@ -60,9 +60,9 @@ class Board :
             temp.id = w+1
             
             #Ship Sizing
-            if w >= 3:
+            if w >= 4:
                 temp.size = 2
-            elif w == 2:
+            elif ((w == 2) or (w == 3)):
                 temp.size = 3
             elif w == 1:
                 temp.size = 4

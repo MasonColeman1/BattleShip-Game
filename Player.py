@@ -4,10 +4,32 @@ from Board import Board
 # such as name or shots fired.
 class Player:
     board = Board()
+    name = ""
+    ai_value = False
 
     def fillBoardAI(self): # This will need to be updated to not be hard coded.
         self.board.randomPlaceShips()
 
+
+    # Function to create player and have them fill in their board.
+    def createWithBoard(self, value) :
+        if (value == True):  #Create AI Player
+            self.name = "AI"
+            self.ai_value == True
+            self.fillBoardAI()
+        else:
+            self.name = "Player 1"
+            self.ai_value = False
+            #Function call to have player create board
+
+
+    #       OLD FUNCTION TO CREATE PLAYER W/ BOARD
+    # Function to create player and have them fill in their board.
+    #def createAIWithBoard() :
+    #   player = Player()
+    #    player.fillBoardAI()
+    #
+    #   return player
 
 
         #OLD PLAYER INPUT FUNCTION - MAY BE USEFUL FOR PYGAME
@@ -26,7 +48,7 @@ class Player:
         good = False
         row_data = 0
         while(good == False):
-            row = input("Set the row (y) coordinate you would like to shoot at. Can be 'A' to 'h' or '1' to '10': ")
+            row = input("Set the row (y) coordinate you would like to shoot at. Can be 'A' to 'J', 'a' to 'j' or '1' to '10': ")
             if (len(row) > 1):
                 if((ord(row[0])==49) and (ord(row[1])==48)):
                     row_data = 9
