@@ -134,6 +134,8 @@ class Game:
             print("-- Options Menu --")
             print("Debug is: ", self.debug)
             print("Difficulty is: ", self.difficulty)
+            print("   0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible")
+            print(" ")
             print("Please Select an Option (1-3 or A-C or a-c): ")
             print("1. Toggle Debug")
             print("2. Toggle Difficulty")
