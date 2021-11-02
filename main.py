@@ -5,7 +5,7 @@ from Ship import Ship
 
 TEST = True
 
-Turns = 40          #Number of Turns
+Turns = 65          #Number of Turns
 reshoot = True      #In case you input an improper coordinate or duplicate coordinate
 debug = True        #Variable that controls whether debug information is printed
 
