@@ -32,7 +32,7 @@ WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
 # Set title of screen
-pygame.display.set_caption("Array Backed Grid")
+pygame.display.set_caption("Grid with Clicks")
 
 # Loop until the user clicks the close button.
 done = False
@@ -55,9 +55,12 @@ while not done:
             # Change the x/y screen coordinates to grid coordinates
             column = pos[0] // (WIDTH + MARGIN)
             row = pos[1] // (HEIGHT + MARGIN)
-            # Set that location to one
-            grid[row][column] = 1
-            print("Click ", pos, "Grid coordinates: ", row, column)
+
+            #makes sure player cannot shoot same square twice
+            if grid[row][column] == 0:
+                # Set that location to one
+                grid[row][column] = 1
+                print("Click ", pos, "Grid coordinates: ", row, column)
         elif event.type == pygame.MOUSEMOTION:
             pos = pygame.mouse.get_pos()
 
