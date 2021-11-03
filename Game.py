@@ -122,8 +122,11 @@ class Game:
     #SinglePlayer Function (AI and Player Board)
         #WILL CREATE ONCE ABILITY TO PLACE SHIPS IS WORKING
     def singlePlayerTwoBoards(self):
-        pass
-
+        # Used to test placeShips
+        player1 = Player()
+        player1.createWithBoard(False)
+        player1.board.updateDisplayBoard(True)
+        player1.board.printDisplayBoard()
 
 
     #Options Function - Change Game Function

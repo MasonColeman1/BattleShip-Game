@@ -35,6 +35,7 @@ def main() :
                 game.singlePlayerOneBoard()
                 reinput == False
             elif ((choice == "2") or (choice == "B") or (choice == "b")):
+                game.singlePlayerTwoBoards()
                 #CALL SINGLEPLAYERTWOBOARD
                 reinput == True
             elif ((choice == "3") or (choice == "C") or (choice == "c")):

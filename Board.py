@@ -52,6 +52,49 @@ class Board :
             return False
 
 
+    def getCoordinate(self, pos): # Combined get_row and get_col into one function. Pos is simply a string "start" or "end" Returns tuple [row_data, col_data]
+        good = False
+        row_data = 0
+        while(good == False):
+            row = input("Set the row (y) coordinate you would like your ship to "+pos+" at. Can be 'A' to 'J', 'a' to 'j' or '1' to '10': ")
+            if (len(row) > 1):
+                if((ord(row[0])==49) and (ord(row[1])==48)):
+                    row_data = 9
+                    good = True
+                else:
+                    good = False
+            else:
+                if ((ord(row) >= 65) and (ord(row) <= 74)):
+                    row_data = ord(row) - 65
+                    good = True
+                elif ((ord(row) >= 97) and (ord(row) <= 106)):
+                    row_data = ord(row) - 97
+                    good = True
+                elif ((ord(row) >= 49) and (ord(row) <= 58)):
+                    row_data = ord(row) - 49
+                    good = True
+                else:
+                    good = False
+
+        good = False
+        col_data = 0
+        while(good == False):
+            col = input("Set the column (x) coordinate you would like your ship to "+pos+" at. Can be '1' to '10': ")
+            if (len(col) > 1):
+                if((ord(col[0])==49) and (ord(col[1])==48)):
+                    col_data = 9
+                    good = True
+                else:
+                    good = False
+            else:
+                if ((ord(col) >= 49) and (ord(col) <= 57)):
+                    col_data = ord(col) - 49
+                    good = True
+                else:
+                    good = False
+
+        return row_data, col_data
+
     def randomPlaceShips(self):  #Randomly place ships
         temp = Ship(0, 2, "Vertical", [], False)
         for w in range(self.ship_num):
@@ -137,7 +180,99 @@ class Board :
             for p in s.positions:
                 self.board[p[0]][p[1]] = 1
 
+    def placeShips(self, custom):
+        if custom == True:
+            pass # Will allow for custom ships
+        else: # Standard array of ships
 
+            #Constructor seems to be bugged - hardcoded for now
+            carrier = Ship(0, 5, "Vertical", [], False)
+            carrier.ship_id = 0
+            carrier.size = 5
+            battleship = Ship(1, 4,"Vertical", [], False)
+            battleship.ship_id = 1
+            battleship.size = 4
+            cruiser = Ship(2, 3, "Vertical", [], False)
+            cruiser.ship_id = 2
+            cruiser.size = 3
+            submarine = Ship(3, 3, "Vertical", [], False)
+            submarine.ship_id = 3
+            submarine.size = 3
+            destroyer = Ship(4, 2, "Vertical", [], False)
+            destroyer.ship_id = 4
+            destroyer.size = 2
+
+            shipSet = [carrier, battleship, cruiser, submarine, destroyer]
+
+            check = True
+            redo = False
+            i = 0
+            while i < len(shipSet):
+                while ((check) or (redo)):    
+                    shipSet[i].positions = [] # Reset ship positions in case of redo or recheck 
+                    # Tell player what ship they are placing on their board           
+                    if shipSet[i].ship_id == 0:
+                        print("Currently placing: 5x1 tile carrier.")
+                    elif shipSet[i].ship_id == 1:
+                        print("Currently placing: 4x1 tile battleship.")
+                    elif shipSet[i].ship_id == 2:
+                        print("Currently placing: 3x1 tile cruiser.")
+                    elif shipSet[i].ship_id == 3:
+                        print("Currently placing: 3x1 tile submarine.")
+                    elif shipSet[i].ship_id == 4:
+                        print("Currently placing: 2x1 tile destroyer.")
+
+                    startX, startY = self.getCoordinate("start")
+                    if (startX < 0 or startX > 10) or (startY < 0 or startY > 10): # Check for out of bounds coordinate
+                        redo = True 
+                    endX, endY = self.getCoordinate("end")
+                    if (endX < 0 or endX > 10) or (endY < 0 or endY > 10): # Check for out of bounds coordinate
+                        redo = True
+
+                    if(startX == endX): # Horizontal orientation
+                        if (endY - startY) + 1  == shipSet[i].size: # Check if user entered the correct end coordinate
+                            redo = False
+                        else:
+                            redo = True
+                        v = 0
+                        while v < shipSet[i].size: # Fill positions
+                            shipSet[i].positions.append([startX, startY + v])
+                            v += 1
+                        v = 0
+                    elif(startY == endY): # Vertical orientation
+                        if (endX - startX) + 1  == shipSet[i].size: # Check if user entered the correct end coordinate
+                            redo = False
+                        else:
+                            redo = True
+                        v = 0
+                        while v < shipSet[i].size: # Fill positions
+                            shipSet[i].positions.append([startX + v, startY])
+                            v +=1
+                        v = 0
+                    else: # Invalid orientation
+                        check = False
+                        redo = True
+                    
+                    #Check Positions
+                    check_temp = False
+                    for s in self.ship_list:
+                        if (shipSet[i].checkPositOverride(s.positions)):
+                            check_temp = True
+                    if (check_temp == True):
+                        check = True
+                    else:
+                        check = False
+                    
+                    # Add ship to ship_list
+                    self.ship_list.append(shipSet[i])
+                i += 1
+                check = True
+                redo = False
+
+                #Adding Ship Positions to board
+                for s in self.ship_list:
+                    for p in s.positions:
+                        self.board[p[0]][p[1]] = 1                
 
     def getShipTotal(self): #Returns total number of ships destroyed or not
         return self.ship_num

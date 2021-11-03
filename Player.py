@@ -21,6 +21,7 @@ class Player:
             self.name = "Player 1"
             self.ai_value = False
             #Function call to have player create board
+            self.board.placeShips(False)
 
 
     #       OLD FUNCTION TO CREATE PLAYER W/ BOARD
