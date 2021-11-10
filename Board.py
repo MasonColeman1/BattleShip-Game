@@ -182,7 +182,11 @@ class Board :
 
     def placeShips(self, custom):
         if custom == True:
-            pass # Will allow for custom ships
+            numShips = input("Please enter the number of ships in your fleet.")
+            while(numShips >= 0):
+                temp_size = input("Please enter a number for your ship's size. Do not exceed the board size of 10.")
+                numShips -= 1
+
         else: # Standard array of ships
 
             #Constructor seems to be bugged - hardcoded for now
@@ -231,6 +235,10 @@ class Board :
 
                     if(startX == endX): # Horizontal orientation
                         if (endY - startY) + 1  == shipSet[i].size: # Check if user entered the correct end coordinate
+                            shipSet[i].orientation = "Horizontal"
+                            redo = False
+                        elif ((startY - endY) + 1 == shipSet[i].size):
+                            shipSet[i].orientation = "Horizontal"
                             redo = False
                         else:
                             redo = True
@@ -241,6 +249,8 @@ class Board :
                         v = 0
                     elif(startY == endY): # Vertical orientation
                         if (endX - startX) + 1  == shipSet[i].size: # Check if user entered the correct end coordinate
+                            redo = False
+                        elif ((-1)*(startX - endX) == shipSet[i].size):
                             redo = False
                         else:
                             redo = True
@@ -263,8 +273,9 @@ class Board :
                     else:
                         check = False
                     
-                    # Add ship to ship_list
-                    self.ship_list.append(shipSet[i])
+                    if(redo == False):
+                        # Add ship to ship_list
+                        self.ship_list.append(shipSet[i])
                 i += 1
                 check = True
                 redo = False
