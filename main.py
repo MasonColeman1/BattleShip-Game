@@ -20,9 +20,9 @@ def main() :
         while(reinput == False):
             print("Please Select an Option (1-5 or A-E or a-e): ")
             print("1. Singleplayer (1 Board)")
-            print("2. Singleplayer (2 Boards)  NOT IMPLEMENTED YET")
+            print("2. Singleplayer (2 Boards)")
             print("3. Multiplayer              NOT IMPLEMENTED YET")
-            print("4. Options                  NOT IMPLEMENTED YET")
+            print("4. Options")
             print("5. Quit Game")
             print(" ")
 

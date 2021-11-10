@@ -15,7 +15,7 @@ class Player:
     def createWithBoard(self, value) :
         if (value == True):  #Create AI Player
             self.name = "AI"
-            self.ai_value == True
+            self.ai_value = True
             self.fillBoardAI()
         else:
             self.name = "Player 1"

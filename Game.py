@@ -1,5 +1,6 @@
 from Player import Player
 from Board import Board
+import random
 
 #GAME CLASS
 
@@ -25,37 +26,48 @@ class Game:
 
 
     #Turn Function
-    def turn(self, attPlayer, defPlayer, turn_num, max_turn):
-        print("\n")
-        print("Turn: ", turn_num + 1, " of ", max_turn)
+    def turn(self, attPlayer, defPlayer, out_value):
         if (attPlayer.ai_value == False):
-            if ((defPlayer.board.getShipTotal() - defPlayer.board.checkDestroyList()) == 1):
-                print("There is", defPlayer.board.getShipTotal() - defPlayer.board.checkDestroyList(), "enemy ship still in the water.")
-            else:
-                print("There are ", defPlayer.board.getShipTotal() - defPlayer.board.checkDestroyList(), "enemy ships still in the water.")
-            print("You have sunk", defPlayer.board.checkDestroyList(), "enemy ships.\n")
+            if (out_value == True):
+                if ((defPlayer.board.getShipTotal() - defPlayer.board.checkDestroyList()) == 1):
+                    print("There is", defPlayer.board.getShipTotal() - defPlayer.board.checkDestroyList(), "enemy ship still in the water.")
+                else:
+                    print("There are ", defPlayer.board.getShipTotal() - defPlayer.board.checkDestroyList(), "enemy ships still in the water.")
+                print("You have sunk", defPlayer.board.checkDestroyList(), "enemy ships.\n")
 
-        reshoot = True
+            reshoot = True
 
-        print(defPlayer.name, "'s Board:")
-        defPlayer.board.updateDisplayBoard(self.debug)
-        defPlayer.board.printDisplayBoard()
+            print(defPlayer.name, "'s Board:")
+            defPlayer.board.updateDisplayBoard(self.debug)
+            defPlayer.board.printDisplayBoard()
 
-        while(reshoot == True):
-            #shot = input("Enter the cooridinate you would like to shoot at. Ex (B, 4)")
-            x = attPlayer.getRow()
-            y = attPlayer.getCol()   #Yes x and y are backwards. It makes sense on board
-            if x != -1 :
+            while(reshoot == True):
+                #shot = input("Enter the cooridinate you would like to shoot at. Ex (B, 4)")
+                x = attPlayer.getRow()
+                y = attPlayer.getCol()   #Yes x and y are backwards. It makes sense on board
+                if x != -1 :
+                    if (defPlayer.board.checkCoordDouble(x, y) == True):
+                        print("You have already shot there. Please try again.")
+                        reshoot = True
+                    else:
+                        self.shoot(attPlayer, defPlayer, x, y)
+                        reshoot = False
+                else :
+                    print("You input wrong coordinates. Please try again.")
+                    reshoot = True
+
+        else:
+            reshoot = True
+
+            while(reshoot == True):
+                x = random.randint(0,9)
+                y = random.randint(0,9)
                 if (defPlayer.board.checkCoordDouble(x, y) == True):
-                    print("You have already shot there. Please try again.")
                     reshoot = True
                 else:
-                    self.shoot(attPlayer, defPlayer, x, y);
+                    self.shoot(attPlayer, defPlayer, x, y)
                     reshoot = False
-            else :
-                print("You input wrong coordinates. Please try again.")
-                reshoot = True
-
+                
         defPlayer.board.updateShipDestroy()
         if (defPlayer.board.checkDestroyList() == defPlayer.board.getShipTotal()):
             return True
@@ -70,6 +82,7 @@ class Game:
         game_over = False   #Used to check if game should end before turn limit
         turn_max = 65
 
+
         if (self.difficulty == 0):
             turn_max = 80
         elif (self.difficulty == 1):
@@ -83,7 +96,7 @@ class Game:
 
 
         Player_1 = Player()
-        Player_1.createWithBoard(False)
+        #Player_1.createWithBoard(False)
         AI_Player = Player()
         AI_Player.createWithBoard(True)
 
@@ -93,7 +106,10 @@ class Game:
 
         while((turn_num < turn_max) and (game_over == False)): #TURN LOOP
 
-            game_over = self.turn(Player_1, AI_Player, turn_num, turn_max) #Turn Function Call
+            print("\n")
+            print("Turn: ", turn_num + 1, " of ", turn_max)
+
+            game_over = self.turn(Player_1, AI_Player, True) #Turn Function Call
             if (game_over == False):
                 turn_num += 1
 
@@ -122,11 +138,69 @@ class Game:
     #SinglePlayer Function (AI and Player Board)
         #WILL CREATE ONCE ABILITY TO PLACE SHIPS IS WORKING
     def singlePlayerTwoBoards(self):
-        # Used to test placeShips
+        turn_num = 0
+        game_over = False   #Used to check if game should end with player win
+        game_over_com = False   #Used to check if game should end with AI win
+
+        #Create Players
         player1 = Player()
         player1.createWithBoard(False)
-        player1.board.updateDisplayBoard(True)
-        player1.board.printDisplayBoard()
+        AI_Player = Player()
+        AI_Player.createWithBoard(True)
+
+        if (self.debug == True):                     #Debug to print list of AI ships at beginning of game
+            print("AI Ship List (DEBUG): ")
+            AI_Player.board.printShipPosits()
+
+        game_over_p1y = False   #Used to check if game should end with player win
+        game_over_com = False   #Used to check if game should end with AI win
+
+        while((game_over == False) and (game_over_com == False)): #TURN LOOP
+
+            print("\n")
+            print("Turn: ", turn_num + 1)
+
+            #Print Player1 Board
+            print("\n")
+            print("Your Board: ")
+            player1.board.updateDisplayBoard(self.debug)
+            player1.board.printDisplayBoard()
+            if ((player1.board.getShipTotal() - player1.board.checkDestroyList()) == 1):
+                print("There is", player1.board.getShipTotal() - player1.board.checkDestroyList(), "friendly ship still in the water.")
+            else:
+                print("There are ", player1.board.getShipTotal() - player1.board.checkDestroyList(), "friendly ships still in the water.")
+            print(player1.board.checkDestroyList(), "friendly ships have been sunk.\n")
+
+            #Print AI Board
+            print("\n")
+            print("AI Board: ")
+            AI_Player.board.updateDisplayBoard(self.debug)
+            AI_Player.board.printDisplayBoard()
+            if ((AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList()) == 1):
+                print("There is", AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList(), "enemy ship still in the water.")
+            else:
+                print("There are ", AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList(), "enemy ships still in the water.")
+            print("You have sunk", AI_Player.board.checkDestroyList(), "enemy ships.\n")
+            
+
+            game_over_ply = self.turn(player1, AI_Player, False) #Turn Function Call
+            if (game_over_ply == False):
+                game_over_com = self.turn(AI_Player, player1, False)
+
+            if ((game_over_ply == False) and (game_over_com == False)):
+                turn_num += 1
+
+        print(" ")
+        if (AI_Player.board.checkDestroyList() == AI_Player.board.getShipTotal()):
+            print("Congrats! You won! You have sunk all the enemy ships.")
+        else:
+            print("Sorry! You lose. You failed to sink all the enemy ships.")
+            if ((AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList()) == 1):
+                print("There was", AI_Player.board.getShipTotal() - AI_player.board.checkDestroyList(), "enemy ship still in the water.")
+            else:
+                print("There were", AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList(), "enemy ships still in the water.")
+                
+
 
 
     #Options Function - Change Game Function
