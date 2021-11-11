@@ -7,9 +7,17 @@ class Player:
     name = ""
     ai_value = False
 
+    def __init__(self) -> None: # Default constructor
+        self.board = Board()
+        self.name = ""
+        self.ai_value = False
+
+
     def fillBoardAI(self): # This will need to be updated to not be hard coded.
         self.board.randomPlaceShips()
 
+    def fillBoardPlayer(self, custom):
+        self.board.placeShips(custom)
 
     # Function to create player and have them fill in their board.
     def createWithBoard(self, value) :
@@ -21,7 +29,7 @@ class Player:
             self.name = "Player 1"
             self.ai_value = False
             #Function call to have player create board
-            self.board.placeShips(False)
+            self.fillBoardPlayer(False)
 
 
     #       OLD FUNCTION TO CREATE PLAYER W/ BOARD

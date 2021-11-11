@@ -34,6 +34,33 @@ class Board :
                      [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
                      [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"]]
 
+    def __init__(self) -> None:
+        self.ship_num = 5
+        self.max_ship_size = 5
+        self.min_ship_size = 2
+        self.ship_list = []
+        self.posit_list = []
+        self.board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+        self.display_board = [[" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                            [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                            [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                            [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                            [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                            [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                            [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                            [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                            [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"],
+                            [" O", " O", " O", " O", " O", " O", " O", " O", " O", " O"]]
+
     def bulletShot(self, x, y) :
         self.posit_list.append([x,y])
         if self.board[x][y] == 1:
@@ -242,11 +269,12 @@ class Board :
                             redo = False
                         else:
                             redo = True
-                        v = 0
-                        while v < shipSet[i].size: # Fill positions
-                            shipSet[i].positions.append([startX, startY + v])
-                            v += 1
-                        v = 0
+                        if(redo == False):
+                            v = 0
+                            while v < shipSet[i].size: # Fill positions
+                                shipSet[i].positions.append([startX, startY + v])
+                                v += 1
+                            v = 0
                     elif(startY == endY): # Vertical orientation
                         if (endX - startX) + 1  == shipSet[i].size: # Check if user entered the correct end coordinate
                             redo = False
@@ -254,15 +282,16 @@ class Board :
                             redo = False
                         else:
                             redo = True
-                        v = 0
-                        while v < shipSet[i].size: # Fill positions
-                            shipSet[i].positions.append([startX + v, startY])
-                            v +=1
-                        v = 0
+                        if(redo == False):
+                            v = 0    
+                            while v < shipSet[i].size: # Fill positions
+                                shipSet[i].positions.append([startX + v, startY])
+                                v +=1
+                            v = 0
                     else: # Invalid orientation
                         check = False
                         redo = True
-                    
+
                     #Check Positions
                     check_temp = False
                     for s in self.ship_list:
@@ -273,7 +302,7 @@ class Board :
                     else:
                         check = False
                     
-                    if(redo == False):
+                    if(redo == False) and (check == False):
                         # Add ship to ship_list
                         self.ship_list.append(shipSet[i])
                 i += 1
