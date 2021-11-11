@@ -64,6 +64,8 @@ class Player:
                     good = True
                 else:
                     good = False
+            elif (len(row) == 0):
+                good = False
             else:
                 if ((ord(row) >= 65) and (ord(row) <= 74)):
                     row_data = ord(row) - 65
@@ -91,6 +93,8 @@ class Player:
                     good = True
                 else:
                     good = False
+            elif (len(col) == 0):
+                good = False
             else:
                 if ((ord(col) >= 49) and (ord(col) <= 57)):
                     col_data = ord(col) - 49
