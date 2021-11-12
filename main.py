@@ -18,7 +18,7 @@ def main() :
     while (quit_game == False):
         print("Welcome to Battleship!")
         while(reinput == False):
-            print("Please Select an Option (1-5 or A-E or a-e): ")
+            print("Please Select an Option (1-5): ")
             print("1. Singleplayer (1 Board)")
             print("2. Singleplayer (2 Boards)")
             print("3. Multiplayer              NOT IMPLEMENTED YET")
@@ -29,22 +29,23 @@ def main() :
             choice = input("Select an Option: ")
             print(" ")
 
-            if (len(choice) > 1):
+            if len(choice) > 1 :
                 reinput == True
-            elif ((choice == "1") or (choice == "A") or (choice == "a")):
+            elif choice == "1":
                 game.singlePlayerOneBoard()
                 reinput == False
-            elif ((choice == "2") or (choice == "B") or (choice == "b")):
+            elif choice == "2" :
                 game.singlePlayerTwoBoards()
                 #CALL SINGLEPLAYERTWOBOARD
                 reinput == True
-            elif ((choice == "3") or (choice == "C") or (choice == "c")):
+            elif choice == "3" :
                 #CALL MULTIPLAYER
+                game.twoPlayer()
                 reinput == True
-            elif ((choice == "4") or (choice == "D") or (choice == "d")):
+            elif choice == "4" :
                 game.options()
                 reinput == True
-            elif ((choice == "5") or (choice == "E") or (choice == "e")):
+            elif choice == "5" :
                 quit_game == True
                 reinput == False
             else:

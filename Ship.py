@@ -1,11 +1,12 @@
 
 
 class Ship:
-    ship_id = 0                 #Debug Var
-    size = 2                    #Ship Size
-    orientation = "Vertical"    #Ship Orientation
-    positions = []              #List of Ship Positions
-    destroyed = False           #Whether Ship is destroyed
+    def __init__() :
+        self.ship_id = 0                 #Debug Var
+        self.size = 2                    #Ship Size
+        self.orientation = "Vertical"    #Ship Orientation
+        self.positions = []              #List of Ship Positions
+        self.destroyed = False           #Whether Ship is destroyed
 
 
     def __init__(self, s_id, size, ori, posit, destro):  #Constructor

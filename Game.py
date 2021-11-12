@@ -203,6 +203,68 @@ class Game:
 
 
 
+    #Two player game
+    def twoPlayer(self):
+        turn_num = 0
+        game_over_p1 = False   #Used to check if game should end with player1 win
+        game_over_p2 = False   #Used to check if game should end with player2 win
+
+        #Create Players
+        print("Player 1 place ships:")
+        player1 = Player()
+        player1.createWithBoard(False)
+        print("Player 2 place ships:")
+        player2 = Player()
+        player2.createWithBoard(False)
+
+        while((game_over_p1 == False) and (game_over_p2 == False)): #TURN LOOP
+
+            print("\n")
+            print("Turn: ", turn_num + 1)
+
+            temp = input("Press enter when player 1 is ready for turn.")
+
+            #Print Player1 Board
+            print("\n")
+            print("Player 1: ")
+            player1.board.updateDisplayBoard(self.debug)
+            player1.board.printDisplayBoard()
+            if ((player1.board.getShipTotal() - player1.board.checkDestroyList()) == 1):
+                print("There is", player1.board.getShipTotal() - player1.board.checkDestroyList(), "friendly ship still in the water.")
+            else:
+                print("There are ", player1.board.getShipTotal() - player1.board.checkDestroyList(), "friendly ships still in the water.")
+            print(player1.board.checkDestroyList(), "friendly ships have been sunk.\n")
+
+            game_over_p1 = self.turn(player1, player2, False) #Turn Function Call
+
+            temp = input("Press enter when player 2 is ready for turn.")
+
+            #Print Player2 Board
+            print("\n")
+            print("Player 2: ")
+            player2.board.updateDisplayBoard(self.debug)
+            player2.board.printDisplayBoard()
+            if ((player2.board.getShipTotal() - player2.board.checkDestroyList()) == 1):
+                print("There is", player2.board.getShipTotal() - player2.board.checkDestroyList(), "friendly ship still in the water.")
+            else:
+                print("There are ", player2.board.getShipTotal() - player2.board.checkDestroyList(), "friendly ships still in the water.")
+            print(player2.board.checkDestroyList(), "friendly ships have been sunk.\n")
+            
+
+            if (game_over_p1 == False):
+                game_over_p2 = self.turn(player2, player1, False)
+
+            if ((game_over_p1 == False) and (game_over_p2 == False)):
+                turn_num += 1
+
+        print(" ")
+        if (player2.board.checkDestroyList() == player2.board.getShipTotal()):
+            print("Player 1 won the game.")
+        else:
+            print("Player 2 won the game.")
+
+
+
     #Options Function - Change Game Function
     def options(self):
         quit_opt = False
@@ -213,7 +275,7 @@ class Game:
             print("Difficulty is: ", self.difficulty)
             print("   0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible")
             print(" ")
-            print("Please Select an Option (1-3 or A-C or a-c): ")
+            print("Please Select an Option (1-3): ")
             print("1. Toggle Debug")
             print("2. Toggle Difficulty")
             print("3. Return to Menu")

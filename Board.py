@@ -4,13 +4,12 @@ import random
 # I made this a class because evantually I am assuming we will want somthing other
 # than integers. Maybe something like ship.
 class Board :
-
-    ship_num = 5
-    max_ship_size = 5
-    min_ship_size = 2
-
-    ship_list = []
-    posit_list = []
+    def __init__(self) :
+        self.ship_num = 5
+        self.max_ship_size = 5
+        self.min_ship_size = 2
+        self.ship_list = []
+        self.posit_list = []
     
     board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -56,7 +55,7 @@ class Board :
         good = False
         row_data = 0
         while(good == False):
-            row = input("Set the row (y) coordinate you would like your ship to "+pos+" at. Can be 'A' to 'J', 'a' to 'j' or '1' to '10': ")
+            row = input("Set the row (y) coordinate you would like your ship to "+pos+" at. Can be 'A' to 'J', 'a' to 'j': ")
             if (len(row) > 1):
                 if((ord(row[0])==49) and (ord(row[1])==48)):
                     row_data = 9
@@ -93,6 +92,7 @@ class Board :
                 else:
                     good = False
 
+        print("You entered (" + str(row) + ", " + str(col) + ")\n");
         return row_data, col_data
 
     def randomPlaceShips(self):  #Randomly place ships

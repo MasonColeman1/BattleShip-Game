@@ -3,9 +3,10 @@ from Board import Board
 # I made this a class because I assume at some point we will want other attributes
 # such as name or shots fired.
 class Player:
-    board = Board()
-    name = ""
-    ai_value = False
+    def __init__(self) :
+        self.board = Board()
+        self.name = ""
+        self.ai_value = False
 
     def fillBoardAI(self): # This will need to be updated to not be hard coded.
         self.board.randomPlaceShips()
@@ -49,7 +50,7 @@ class Player:
         good = False
         row_data = 0
         while(good == False):
-            row = input("Set the row (y) coordinate you would like to shoot at. Can be 'A' to 'J', 'a' to 'j' or '1' to '10': ")
+            row = input("Set the row (y) coordinate you would like to shoot at. Can be 'A' to 'J', 'a' to 'j': ")
             if (len(row) > 1):
                 if((ord(row[0])==49) and (ord(row[1])==48)):
                     row_data = 9
