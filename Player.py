@@ -8,9 +8,17 @@ class Player:
         self.name = ""
         self.ai_value = False
 
+    def __init__(self) -> None: # Default constructor
+        self.board = Board()
+        self.name = ""
+        self.ai_value = False
+
+
     def fillBoardAI(self): # This will need to be updated to not be hard coded.
         self.board.randomPlaceShips()
 
+    def fillBoardPlayer(self, custom):
+        self.board.placeShips(custom)
 
     # Function to create player and have them fill in their board.
     def createWithBoard(self, value) :
@@ -22,7 +30,7 @@ class Player:
             self.name = "Player 1"
             self.ai_value = False
             #Function call to have player create board
-            self.board.placeShips(False)
+            self.fillBoardPlayer(False)
 
 
     #       OLD FUNCTION TO CREATE PLAYER W/ BOARD
@@ -57,6 +65,8 @@ class Player:
                     good = True
                 else:
                     good = False
+            elif (len(row) == 0):
+                good = False
             else:
                 if ((ord(row) >= 65) and (ord(row) <= 74)):
                     row_data = ord(row) - 65
@@ -84,6 +94,8 @@ class Player:
                     good = True
                 else:
                     good = False
+            elif (len(col) == 0):
+                good = False
             else:
                 if ((ord(col) >= 49) and (ord(col) <= 57)):
                     col_data = ord(col) - 49

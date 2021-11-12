@@ -123,7 +123,7 @@ class Game:
         else:
             print("Sorry! You lose. You failed to sink all the enemy ships.")
             if ((AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList()) == 1):
-                print("There was", AI_Player.board.getShipTotal() - AI_player.board.checkDestroyList(), "enemy ship still in the water.")
+                print("There was", AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList(), "enemy ship still in the water.")
             else:
                 print("There were", AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList(), "enemy ships still in the water.")
                 
@@ -149,6 +149,8 @@ class Game:
         AI_Player.createWithBoard(True)
 
         if (self.debug == True):                     #Debug to print list of AI ships at beginning of game
+            print("Player Ship List (DEBUG): ")
+            player1.board.printShipPosits()
             print("AI Ship List (DEBUG): ")
             AI_Player.board.printShipPosits()
 
@@ -196,7 +198,7 @@ class Game:
         else:
             print("Sorry! You lose. You failed to sink all the enemy ships.")
             if ((AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList()) == 1):
-                print("There was", AI_Player.board.getShipTotal() - AI_player.board.checkDestroyList(), "enemy ship still in the water.")
+                print("There was", AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList(), "enemy ship still in the water.")
             else:
                 print("There were", AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList(), "enemy ships still in the water.")
                 
