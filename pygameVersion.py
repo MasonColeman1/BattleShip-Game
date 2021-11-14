@@ -76,6 +76,17 @@ while not done:
                     # Set that location to one
                     grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 1
                     print("Click ", pos, "Grid coordinates: ", row, column)
+                else: # overlap is detected
+                    print("Overlap detected, but how do we \'roll back\' the changes??")
+                    spot_to_keep = [row+(spot*ship_orientation[0]), column+(spot*ship_orientation[1])]
+                    for spot in range(ship_len):
+                        grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 0
+                    grid[spot_to_keep[0]][spot_to_keep[1]] = 1
+                    break
+                    
+            # Making sure the ship can't be placed a second time
+            ship_len = 0
+            ship_orientation = [0, 0]
         elif event.type == pygame.MOUSEMOTION: # Gets current mouse position
             pos = pygame.mouse.get_pos()
 
