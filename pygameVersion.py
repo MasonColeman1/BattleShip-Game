@@ -82,8 +82,8 @@ while not done:
                     for spot in range(ship_len):
                         grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 0
                     grid[spot_to_keep[0]][spot_to_keep[1]] = 1
-                    break
-                    
+                    placeable_ships.append(ship_len)
+                    break    
             # Making sure the ship can't be placed a second time
             ship_len = 0
             ship_orientation = [0, 0]
