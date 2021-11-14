@@ -1,4 +1,5 @@
 import pygame
+import time
 # Since we might need these later
 from Game import Game
 from Player import Player
@@ -21,13 +22,13 @@ MARGIN = 5
 
 # Create a 2 dimensional array. A two dimensional
 # array is simply a list of lists.
-grid = []
+p1grid = []
 for row in range(10):
     # Add an empty array that will hold each cell
     # in this row
-    grid.append([])
+    p1grid.append([])
     for column in range(10):
-        grid[row].append(0)  # Append a cell
+        p1grid[row].append(0)  # Append a cell
 
 # Initialize pygame
 pygame.init()
@@ -53,6 +54,7 @@ curr_row = 10
 placeable_ships = [2, 3, 3, 4, 5]
 ship_len = 0
 ship_orientation = [0, 0]
+# all_ships_placed = False
 
 # -------- Main Program Loop -----------
 while not done:
@@ -70,18 +72,18 @@ while not done:
             if ship_len == 0 or ship_orientation == [0, 0]: # Just in case they try to place without choosing anything
                 print("Invalid ship placement options")
                 continue
-            else: print("ship will be " + str(ship_orientation[0]) + " with length " + str(ship_len))
+            else: print("ship will be " + ("vertical" if ship_orientation[0] else "horizontal") + " with length " + str(ship_len))
             for spot in range(ship_len):
-                if grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] == 0:
+                if p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] == 0:
                     # Set that location to one
-                    grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 1
+                    p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 1
                     print("Click ", pos, "Grid coordinates: ", row, column)
                 else: # overlap is detected
                     print("Overlap detected, but how do we \'roll back\' the changes??")
                     spot_to_keep = [row+(spot*ship_orientation[0]), column+(spot*ship_orientation[1])]
                     for spot in range(ship_len):
-                        grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 0
-                    grid[spot_to_keep[0]][spot_to_keep[1]] = 1
+                        p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 0
+                    p1grid[spot_to_keep[0]][spot_to_keep[1]] = 1
                     placeable_ships.append(ship_len)
                     break    
             # Making sure the ship can't be placed a second time
@@ -116,10 +118,11 @@ while not done:
     screen.fill(BLACK)
 
     # Draw the grid
+    # if not all_ships_placed:
     for row in range(10):
         for column in range(10):
             color = WHITE
-            if grid[row][column] == 1:
+            if p1grid[row][column] == 1:
                 color = GREEN
             elif row == curr_row and column == curr_column:
                 color = GRAY
@@ -129,12 +132,20 @@ while not done:
                             (MARGIN + HEIGHT) * row + MARGIN,
                             WIDTH,
                             HEIGHT])
+    #     if placeable_ships == []: all_ships_placed = True
+    # else:
+    #     print("Now the logic of the AI placing its ships needs to be implemented")
+    #     time.sleep(3)
+    #     done = True
+
 
     # Limit to 60 frames per second
     clock.tick(60)
 
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
+
+    if placeable_ships == []: all_ships_placed = True
 
 # Be IDLE friendly. If you forget this line, the program will 'hang'
 # on exit.
