@@ -5,8 +5,9 @@ import random
 #GAME CLASS
 
 class Game:
-    debug = True        #Variable that controls whether debug information is printed
-    difficulty = 1      #Variable to change game difficulty  ## 0 - Easy,  1 - Normal, 2 - Hard, 3 - Impossible
+    def __init__(self):
+        self.debug = True        #Variable that controls whether debug information is printed
+        self.difficulty = 1      #Variable to change game difficulty  ## 0 - Easy,  1 - Normal, 2 - Hard, 3 - Impossible
 
 
 
@@ -214,10 +215,10 @@ class Game:
         #Create Players
         print("Player 1 place ships:")
         player1 = Player()
-        player1.createWithBoard(False)
+        player1.createWithBoardAndName("Player 1")
         print("Player 2 place ships:")
         player2 = Player()
-        player2.createWithBoard(False)
+        player2.createWithBoardAndName("Player 2")
 
         while((game_over_p1 == False) and (game_over_p2 == False)): #TURN LOOP
 

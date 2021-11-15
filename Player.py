@@ -32,6 +32,11 @@ class Player:
             #Function call to have player create board
             self.fillBoardPlayer(False)
 
+    def createWithBoardAndName(self, name) :
+        self.name = name
+        self.ai_value = False
+        self.fillBoardPlayer(False)
+
 
     #       OLD FUNCTION TO CREATE PLAYER W/ BOARD
     # Function to create player and have them fill in their board.

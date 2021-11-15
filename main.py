@@ -21,7 +21,7 @@ def main() :
             print("Please Select an Option (1-5): ")
             print("1. Singleplayer (1 Board)")
             print("2. Singleplayer (2 Boards)")
-            print("3. Multiplayer              NOT IMPLEMENTED YET")
+            print("3. Multiplayer")
             print("4. Options")
             print("5. Quit Game")
             print(" ")
