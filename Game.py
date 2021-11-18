@@ -58,16 +58,236 @@ class Game:
                     reshoot = True
 
         else:
+            if (attPlayer.last_posit != []):
+                print("Last Posit: ",attPlayer.last_posit[0],",",attPlayer.last_posit[1])
+                print("Last Ori: ",attPlayer.last_ori)
             reshoot = True
+            cancel_counter = 0
+            new_posit = []
+            if(self.difficulty == 0):       #Easy
+                while(reshoot == True):
+                    x = random.randint(0,9)
+                    y = random.randint(0,9)
+                    if (defPlayer.board.checkCoordDouble(x, y) == True):
+                        reshoot = True
+                    else:
+                        self.shoot(attPlayer, defPlayer, x, y)
+                        reshoot = False
+            elif(self.difficulty == 1):     #Medium
+                while(reshoot == True):
+                    if (attPlayer.last_hit == True):
+                        new_posit = []
+                        if (attPlayer.last_ori == "None"):
+                            r = random.randint(0,1)
+                            if (r == 0):
+                                attPlayer.last_ori = "Horizontal"
+                            else:
+                                attPlayer.last_ori = "Vertical"
+                        print("Last Ori 2: ", attPlayer.last_ori)
+                        if(attPlayer.last_ori == "Vertical"):
+                            if((attPlayer.last_posit[0] > 0) and (attPlayer.last_posit[0]<9)):
+                                s = random.randint(0,1)
+                                if (s == 0):
+                                    new_posit = [attPlayer.last_posit[0]-1, attPlayer.last_posit[1]]
+                                else:
+                                    new_posit = [attPlayer.last_posit[0]+1, attPlayer.last_posit[1]]
+                            elif (attPlayer.last_posit[0] == 0):
+                                new_posit = [attPlayer.last_posit[0]+1, attPlayer.last_posit[1]]
+                            else:
+                                new_posit = [attPlayer.last_posit[0]-1, attPlayer.last_posit[1]]
+                        else:
+                            if((attPlayer.last_posit[1] > 0) and (attPlayer.last_posit[1]<9)):
+                                s = random.randint(0,1)
+                                if (s == 0):
+                                    new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]-1]
+                                else:
+                                    new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]+1]
+                            elif (attPlayer.last_posit[1] == 0):
+                                new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]+1]
+                            else:
+                                new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]-1]
+                        if((defPlayer.board.board[new_posit[0]][new_posit[1]] == 2) or (defPlayer.board.board[new_posit[0]][new_posit[1]] == 3)):
+                            if (cancel_counter == 2):
+                                attPlayer.last_posit = []
+                                attPlayer.last_hit = False
+                                attPlayer.last_ori = "None"
+                                cancel_counter = 0
+                            else:
+                                attPlayer.last_ori = "None"
+                                cancel_counter += 1
+                            reshoot = True
+                        elif (defPlayer.board.board[new_posit[0]][new_posit[1]] == 1):
+                            self.shoot(attPlayer, defPlayer, new_posit[0], new_posit[1])
+                            attPlayer.last_posit[0] = new_posit[0]
+                            attPlayer.last_posit[1] = new_posit[1]
+                            attPlayer.last_hit = True
+                            reshoot = False
+                        else:
+                            self.shoot(attPlayer, defPlayer, new_posit[0], new_posit[1])
+                            attPlayer.last_ori = "None"
+                            reshoot = False     
 
-            while(reshoot == True):
-                x = random.randint(0,9)
-                y = random.randint(0,9)
-                if (defPlayer.board.checkCoordDouble(x, y) == True):
-                    reshoot = True
-                else:
-                    self.shoot(attPlayer, defPlayer, x, y)
-                    reshoot = False
+                    else: 
+                        x = random.randint(0,9)
+                        y = random.randint(0,9)
+                        r = random.randint(0,4)
+                        if (defPlayer.board.checkCoordDouble(x, y) == True):
+                            reshoot = True
+                        elif (defPlayer.board.board[x][y] != 1):
+                            if (r <= 2):
+                                reshoot = True
+                            else:
+                                self.shoot(attPlayer, defPlayer, x, y)
+                                attPlayer.last_posit = [x,y]
+                                attPlayer.last_hit = True
+                                reshoot = False
+                        else:
+                            self.shoot(attPlayer, defPlayer, x, y)
+                            attPlayer.last_posit = [x,y]
+                            attPlayer.last_hit = True
+                            reshoot = False
+
+            elif(self.difficulty == 2):     #Hard
+                while(reshoot == True):
+                    if (attPlayer.last_hit == True):
+                        new_posit = []
+                        if (attPlayer.last_ori == "None"):
+                            r = random.randint(0,1)
+                            if (r == 0):
+                                attPlayer.last_ori = "Horizontal"
+                            else:
+                                attPlayer.last_ori = "Vertical"
+                        print("Last Ori 2: ", attPlayer.last_ori)
+                        if(attPlayer.last_ori == "Vertical"):
+                            if((attPlayer.last_posit[0] > 0) and (attPlayer.last_posit[0]<9)):
+                                s = random.randint(0,1)
+                                if (s == 0):
+                                    new_posit = [attPlayer.last_posit[0]-1, attPlayer.last_posit[1]]
+                                else:
+                                    new_posit = [attPlayer.last_posit[0]+1, attPlayer.last_posit[1]]
+                            elif (attPlayer.last_posit[0] == 0):
+                                new_posit = [attPlayer.last_posit[0]+1, attPlayer.last_posit[1]]
+                            else:
+                                new_posit = [attPlayer.last_posit[0]-1, attPlayer.last_posit[1]]
+                        else:
+                            if((attPlayer.last_posit[1] > 0) and (attPlayer.last_posit[1]<9)):
+                                s = random.randint(0,1)
+                                if (s == 0):
+                                    new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]-1]
+                                else:
+                                    new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]+1]
+                            elif (attPlayer.last_posit[1] == 0):
+                                new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]+1]
+                            else:
+                                new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]-1]
+                        if((defPlayer.board.board[new_posit[0]][new_posit[1]] == 2) or (defPlayer.board.board[new_posit[0]][new_posit[1]] == 3)):
+                            if (cancel_counter == 2):
+                                attPlayer.last_posit = []
+                                attPlayer.last_hit = False
+                                attPlayer.last_ori = "None"
+                                cancel_counter = 0
+                            else:
+                                attPlayer.last_ori = "None"
+                                cancel_counter += 1
+                            reshoot = True
+                        elif (defPlayer.board.board[new_posit[0]][new_posit[1]] == 1):
+                            self.shoot(attPlayer, defPlayer, new_posit[0], new_posit[1])
+                            attPlayer.last_posit[0] = new_posit[0]
+                            attPlayer.last_posit[1] = new_posit[1]
+                            attPlayer.last_hit = True
+                            reshoot = False
+                        else:
+                            self.shoot(attPlayer, defPlayer, new_posit[0], new_posit[1])
+                            attPlayer.last_ori = "None"
+                            reshoot = False     
+
+                    else: 
+                        x = random.randint(0,9)
+                        y = random.randint(0,9)
+                        r = random.randint(0,4)
+                        if (defPlayer.board.checkCoordDouble(x, y) == True):
+                            reshoot = True
+                        elif (defPlayer.board.board[x][y] != 1):
+                            if (r <= 1):
+                                reshoot = True
+                            else:
+                                self.shoot(attPlayer, defPlayer, x, y)
+                                attPlayer.last_posit = [x,y]
+                                attPlayer.last_hit = True
+                                reshoot = False
+                        else:
+                            self.shoot(attPlayer, defPlayer, x, y)
+                            attPlayer.last_posit = [x,y]
+                            attPlayer.last_hit = True
+                            reshoot = False
+
+            else:                           #Impossible
+                while(reshoot == True):
+                    if (attPlayer.last_hit == True):
+                        new_posit = []
+                        if (attPlayer.last_ori == "None"):
+                            r = random.randint(0,1)
+                            if (r == 0):
+                                attPlayer.last_ori = "Horizontal"
+                            else:
+                                attPlayer.last_ori = "Vertical"
+                        print("Last Ori 2: ", attPlayer.last_ori)
+                        if(attPlayer.last_ori == "Vertical"):
+                            if((attPlayer.last_posit[0] > 0) and (attPlayer.last_posit[0]<9)):
+                                s = random.randint(0,1)
+                                if (s == 0):
+                                    new_posit = [attPlayer.last_posit[0]-1, attPlayer.last_posit[1]]
+                                else:
+                                    new_posit = [attPlayer.last_posit[0]+1, attPlayer.last_posit[1]]
+                            elif (attPlayer.last_posit[0] == 0):
+                                new_posit = [attPlayer.last_posit[0]+1, attPlayer.last_posit[1]]
+                            else:
+                                new_posit = [attPlayer.last_posit[0]-1, attPlayer.last_posit[1]]
+                        else:
+                            if((attPlayer.last_posit[1] > 0) and (attPlayer.last_posit[1]<9)):
+                                s = random.randint(0,1)
+                                if (s == 0):
+                                    new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]-1]
+                                else:
+                                    new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]+1]
+                            elif (attPlayer.last_posit[1] == 0):
+                                new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]+1]
+                            else:
+                                new_posit = [attPlayer.last_posit[0], attPlayer.last_posit[1]-1]
+                        if((defPlayer.board.board[new_posit[0]][new_posit[1]] == 2) or (defPlayer.board.board[new_posit[0]][new_posit[1]] == 3)):
+                            if (cancel_counter == 2):
+                                attPlayer.last_posit = []
+                                attPlayer.last_hit = False
+                                attPlayer.last_ori = "None"
+                                cancel_counter = 0
+                            else:
+                                attPlayer.last_ori = "None"
+                                cancel_counter += 1
+                            reshoot = True
+                        elif (defPlayer.board.board[new_posit[0]][new_posit[1]] == 1):
+                            self.shoot(attPlayer, defPlayer, new_posit[0], new_posit[1])
+                            attPlayer.last_posit[0] = new_posit[0]
+                            attPlayer.last_posit[1] = new_posit[1]
+                            attPlayer.last_hit = True
+                            reshoot = False
+                        else:
+                            self.shoot(attPlayer, defPlayer, new_posit[0], new_posit[1])
+                            attPlayer.last_ori = "None"
+                            reshoot = False     
+
+                    else: 
+                        x = random.randint(0,9)
+                        y = random.randint(0,9)
+                        if (defPlayer.board.checkCoordDouble(x, y) == True):
+                            reshoot = True
+                        elif (defPlayer.board.board[x][y] != 1):
+                            reshoot = True
+                        else:
+                            self.shoot(attPlayer, defPlayer, x, y)
+                            attPlayer.last_posit = [x,y]
+                            attPlayer.last_hit = True
+                            reshoot = False
+                     
                 
         defPlayer.board.updateShipDestroy()
         if (defPlayer.board.checkDestroyList() == defPlayer.board.getShipTotal()):
@@ -202,7 +422,8 @@ class Game:
                 print("There was", AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList(), "enemy ship still in the water.")
             else:
                 print("There were", AI_Player.board.getShipTotal() - AI_Player.board.checkDestroyList(), "enemy ships still in the water.")
-                
+        print(" ")
+        print(" ")
 
 
 

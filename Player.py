@@ -7,14 +7,20 @@ class Player:
         self.board = Board()
         self.name = ""
         self.ai_value = False
+        self.last_posit = []
+        self.last_hit = False
+        self.last_ori = "Vertical"
 
     def __init__(self) -> None: # Default constructor
         self.board = Board()
         self.name = ""
         self.ai_value = False
+        self.last_posit = []
+        self.last_hit = False
+        self.last_ori = "Vertical"
 
 
-    def fillBoardAI(self): # This will need to be updated to not be hard coded.
+    def fillBoardAI(self): 
         self.board.randomPlaceShips()
 
     def fillBoardPlayer(self, custom):
