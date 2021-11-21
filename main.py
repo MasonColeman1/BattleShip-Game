@@ -21,33 +21,37 @@ def main() :
             print("Please Select an Option (1-5): ")
             print("1. Singleplayer (1 Board)")
             print("2. Singleplayer (2 Boards)")
-            print("3. Multiplayer")
-            print("4. Options")
-            print("5. Quit Game")
+            print("3. Multiplayer (1 v 1)")
+            print("4. Multiplayer (1 v 1 v 1)")
+            print("5. Options")
+            print("6. Quit Game")
             print(" ")
 
             choice = input("Select an Option: ")
             print(" ")
 
             if len(choice) > 1 :
-                reinput == True
+                reinput = True
             elif choice == "1":
                 game.singlePlayerOneBoard()
-                reinput == False
+                reinput = False
             elif choice == "2" :
                 game.singlePlayerTwoBoards()
                 #CALL SINGLEPLAYERTWOBOARD
-                reinput == True
+                reinput = True
             elif choice == "3" :
                 #CALL MULTIPLAYER
                 game.twoPlayer()
-                reinput == True
+                reinput = True
             elif choice == "4" :
-                game.options()
-                reinput == True
+                game.threePlayerGame()
+                reinput = True
             elif choice == "5" :
-                quit_game == True
-                reinput == False
+                game.options()
+                reinput = True
+            elif choice == "6" :
+                quit_game = True
+                reinput = False
             else:
                 reinput == True
 

@@ -488,6 +488,128 @@ class Game:
             print("Player 2 won the game.")
 
 
+    #Three Player Game
+    def threePlayerGame(self) :
+        turn_num = 0
+        game_over_p1 = False   #Used to check if player 1 can keep playing.
+        game_over_p2 = False   #Used to check if player 2 can keep playing.
+        game_over_p3 = False   #Used to check if player 3 can keep playing.
+
+        #Create Players
+        print("Player 1 place ships:")
+        player1 = Player()
+        player1.createWithBoardAndName("Player 1")
+        print("Player 2 place ships:")
+        player2 = Player()
+        player2.createWithBoardAndName("Player 2")
+        print("Player 3 place ships:")
+        player3 = Player()
+        player3.createWithBoardAndName("Player 3")
+
+        while((game_over_p1 == False and game_over_p2 == False) or (game_over_p1 == False and game_over_p3 == False) or (game_over_p2 == False and game_over_p3 == False)): #TURN LOOP
+
+            print("\n")
+            print("Turn: ", turn_num + 1)
+
+            if game_over_p1 == False:
+                temp = input("Press enter when player 1 is ready for turn.")
+
+                #Print Player1 Board
+                print("\n")
+                print("Player 1: ")
+                player1.board.updateDisplayBoard(self.debug)
+                player1.board.printDisplayBoard()
+                if ((player1.board.getShipTotal() - player1.board.checkDestroyList()) == 1):
+                    print("There is", player1.board.getShipTotal() - player1.board.checkDestroyList(), "friendly ship still in the water.")
+                else:
+                    print("There are ", player1.board.getShipTotal() - player1.board.checkDestroyList(), "friendly ships still in the water.")
+                print(player1.board.checkDestroyList(), "friendly ships have been sunk.\n")
+   
+                if game_over_p2 == False and game_over_p3 == False:
+                    which_player = input("Press 2 to attack Player 2, or press 3 to attack Player 3.")
+                    if which_player == "2" :
+                        game_over_p2 = self.turn(player1, player2, False)
+                    else :
+                        game_over_p3 = self.turn(player1, player3, False)
+                elif game_over_p2 == False :
+                    game_over_p2 = self.turn(player1, player2, False)
+                elif game_over_p3 == False :
+                    game_over_p1y3 = self.turn(player1, player3, False)
+            else :
+                print("Player 1 has no more ships.")
+
+            if game_over_p2 == False:
+                temp = input("Press enter when player 2 is ready for turn.")
+    
+                #Print Player2 Board
+                print("\n")
+                print("Player 2: ")
+                player2.board.updateDisplayBoard(self.debug)
+                player2.board.printDisplayBoard()
+                if ((player2.board.getShipTotal() - player2.board.checkDestroyList()) == 1):
+                    print("There is", player2.board.getShipTotal() - player2.board.checkDestroyList(), "friendly ship still in the water.")
+                else:
+                    print("There are ", player2.board.getShipTotal() - player2.board.checkDestroyList(), "friendly ships still in the water.")
+                print(player2.board.checkDestroyList(), "friendly ships have been sunk.\n")
+
+                if game_over_p1 == False and game_over_p3 == False:
+                    which_player = input("Press 1 to attack Player 1, or press 3 to attack Player 3.")
+                    if which_player == "1" :
+                        game_over_p1 = self.turn(player2, player1, False)
+                    else :
+                        game_over_p3 = self.turn(player2, player3, False)
+                elif game_over_p1 == False :
+                    game_over_p1 = self.turn(player2, player1, False)
+                elif game_over_p3 == False :
+                    game_over_p1y3 = self.turn(player2, player3, False)
+                else :
+                    print("All other players have no more ships.")
+
+            else :
+                print("Player 2 has no more ships.")
+
+            if game_over_p3 == False :
+                temp = input("Press enter when player 3 is ready for turn.")
+    
+                #Print Player3 Board
+                print("\n")
+                print("Player 3: ")
+                player3.board.updateDisplayBoard(self.debug)
+                player3.board.printDisplayBoard()
+                if ((player3.board.getShipTotal() - player3.board.checkDestroyList()) == 1):
+                    print("There is", player3.board.getShipTotal() - player3.board.checkDestroyList(), "friendly ship still in the water.")
+                else:
+                    print("There are ", player3.board.getShipTotal() - player3.board.checkDestroyList(), "friendly ships still in the water.")
+                print(player3.board.checkDestroyList(), "friendly ships have been sunk.\n")
+            
+                if game_over_p1 == False and game_over_p2 == False:
+                    which_player = input("Press 1 to attack Player 1, or press 2 to attack Player 2.")
+                    if which_player == "1" :
+                        game_over_p1 = self.turn(player3, player1, False)
+                    else :
+                        game_over_p2 = self.turn(player3, player2, False)
+                elif game_over_p1 == False :
+                    game_over_p1 = self.turn(player3, player1, False)
+                elif game_over_p2 == False :
+                    game_over_p1y2 = self.turn(player3, player2, False)
+                else :
+                    print("All other players have no more ships.")
+
+            else :
+                print("Player 3 has no more ships.")
+
+            if ((game_over_p1 == False and game_over_p2 == False) or (game_over_p1 == False and game_over_p3 == False) or (game_over_p2 == False and game_over_p3 == False)):
+                turn_num += 1
+
+        print(" ")
+        if (player2.board.checkDestroyList() == player2.board.getShipTotal() and player3.board.checkDestroyList() == player3.board.getShipTotal()):
+            print("Player 1 won the game.")
+        elif (player1.board.checkDestroyList() == player1.board.getShipTotal() and player3.board.checkDestroyList() == player3.board.getShipTotal()):
+            print("Player 2 won the game.")
+        elif (player1.board.checkDestroyList() == player1.board.getShipTotal() and player2.board.checkDestroyList() == player2.board.getShipTotal()):
+            print("Player 3 won the game.")
+
+
 
     #Options Function - Change Game Function
     def options(self):
