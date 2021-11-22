@@ -146,7 +146,9 @@ def play_screen(screen):
     placeable_ships = [2, 3, 3, 4, 5]
     ship_len = 0
     ship_orientation = [0, 0]
-    # all_ships_placed = False
+
+    # Indicator if the player is done placing ships
+    all_done = False
 
     while True:
         for event in pygame.event.get():
@@ -205,6 +207,8 @@ def play_screen(screen):
                     ship_orientation = [1,0]
                 elif event.key == pygame.K_h: # Set the ship to horizontal orientation
                     ship_orientation = [0,1]
+                if event.key == pygame.K_d and placeable_ships == []:
+                    all_done = True
 
 
 
@@ -226,16 +230,11 @@ def play_screen(screen):
                                 (MARGIN + HEIGHT) * row + MARGIN,
                                 WIDTH,
                                 HEIGHT])
-        #     if placeable_ships == []: all_ships_placed = True
-        # else:
-        #     print("Now the logic of the AI placing its ships needs to be implemented")
-        #     time.sleep(3)
-        #     done = True
 
 
         pygame.display.update()
 
-        if placeable_ships == []: all_ships_placed = True
+        if all_done: return
 
 
 def settings_screen(screen):
