@@ -260,23 +260,29 @@ def play_ai_screen(screen):
     ship_orientation = [0, 0]
     overlap = False
     while placeable_ships:
+        # Select the first ship in the list to place
         ship = placeable_ships[0]
+        # Give it a random position and orientation
         col, row = random.randint(0,10-ship-1), random.randint(0,10-ship-1)
         ship_orientation = [1,0] if random.randint(0,1) else [0,1]
-        # for square in range(ship):
-        #     if aigrid[col+(square*ship_orientation[0])][row+(square*ship_orientation[1])] == 1:
+        # Check for overlaps
+        # for checksquare in range(ship):
+        #     if aigrid[row+(checksquare*ship_orientation[0])][col+(checksquare*ship_orientation[1])] == 1:
         #         overlap = True
+        # Place the ship in the aigrid only if no overlap
         if not overlap:
             for square in range(ship):
-                aigrid[row+(square*ship_orientation[0])][col+(square*ship_orientation[1])] == 1
+                aigrid[row+(square*ship_orientation[0])][col+(square*ship_orientation[1])] = 1
+                # print(row+(square*ship_orientation[0]), col+(square*ship_orientation[1]))
             placeable_ships.remove(ship)
-            print(col, row, ("vertical" if ship_orientation==[1,0] else "horizontal"))
+            # print(col, row, ("vertical" if ship_orientation==[1,0] else "horizontal"))
     
-    print(placeable_ships)
-    for i in aigrid:
-        for j in i:
-            print(j, end="")
-        print()
+    # Print the aigrid in console (For debugging purposes)
+    # print(placeable_ships)
+    # for i in aigrid:
+    #     for j in i:
+    #         print(j, end="")
+    #     print()
 
 
     while True:
