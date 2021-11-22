@@ -1,6 +1,7 @@
 import pygame
 import sys
 from enum import Enum
+import random
 
 #defining all the colors
 WHITE = (255,255,255)
@@ -11,6 +12,7 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 GRAY = (211, 211, 211)
 ORANGE = (255,165,0)
+PINK = (255,105,180)
 
 #THESE ARE THE SETTINGS VARIABLES
 #need to be global since settings mode and play mode need to access them
@@ -49,7 +51,7 @@ def main():
             game_state = play_screen(screen)
 
         if game_state == GameState.PLAY_AI:
-            game_state = play_ai(screen)
+            game_state = play_ai_screen(screen)
 
         if game_state == GameState.SETTINGS:
             game_state = settings_screen(screen)
@@ -235,7 +237,7 @@ def play_screen(screen):
 
         pygame.display.update()
 
-def play_ai(screen):
+def play_ai_screen(screen):
     aigrid = []
     for row in range(10):
         # Add an empty array that will hold each cell
@@ -250,6 +252,32 @@ def play_ai(screen):
     # Used to track current grid location mouse is in
     curr_column = 10
     curr_row = 10
+
+    # Dropping some real quick logic for placing ships
+    #   Information on ship being placed
+    placeable_ships = [2, 3, 3, 4, 5]
+    ship_len = 0
+    ship_orientation = [0, 0]
+    overlap = False
+    while placeable_ships:
+        ship = placeable_ships[0]
+        col, row = random.randint(0,10-ship-1), random.randint(0,10-ship-1)
+        ship_orientation = [1,0] if random.randint(0,1) else [0,1]
+        # for square in range(ship):
+        #     if aigrid[col+(square*ship_orientation[0])][row+(square*ship_orientation[1])] == 1:
+        #         overlap = True
+        if not overlap:
+            for square in range(ship):
+                aigrid[row+(square*ship_orientation[0])][col+(square*ship_orientation[1])] == 1
+            placeable_ships.remove(ship)
+            print(col, row, ("vertical" if ship_orientation==[1,0] else "horizontal"))
+    
+    print(placeable_ships)
+    for i in aigrid:
+        for j in i:
+            print(j, end="")
+        print()
+
 
     while True:
         for event in pygame.event.get():
@@ -272,7 +300,7 @@ def play_ai(screen):
             for column in range(10):
                 color = WHITE
                 if aigrid[row][column] == 1:
-                    color = GREEN
+                    color = PINK
                 elif row == curr_row and column == curr_column:
                     color = GRAY
                 pygame.draw.rect(screen,
