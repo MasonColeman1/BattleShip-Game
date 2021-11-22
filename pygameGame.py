@@ -180,7 +180,7 @@ def play_screen(screen):
                         p1grid[spot_to_keep[0]][spot_to_keep[1]] = 1
                         placeable_ships.append(ship_len)
                         break
-                # Making sure the ship can't be placed a second time
+                # Making sure the ship can't be placed a second time (resetting it essentially)
                 ship_len = 0
                 ship_orientation = [0, 0]
             elif event.type == pygame.MOUSEMOTION: # Gets current mouse position
