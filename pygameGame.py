@@ -16,7 +16,7 @@ ORANGE = (255,165,0)
 #need to be global since settings mode and play mode need to access them
 #I am going to follow the logic group and just make a choice var
 #default is singleplayer (1 board)
-choice = 1
+choice = 2
 debug = False
 difficulty = 0 #0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible
 
@@ -45,8 +45,11 @@ def main():
         if game_state == GameState.TITLE:
             game_state = title_screen(screen)
 
-        if game_state == GameState.PLAY:
+        if game_state == GameState.PLACE_SHIPS:
             game_state = play_screen(screen)
+
+        if game_state == GameState.PLAY_AI:
+            game_state = play_ai(screen)
 
         if game_state == GameState.SETTINGS:
             game_state = settings_screen(screen)
@@ -91,7 +94,7 @@ def title_screen(screen):
                     return GameState.QUIT
 
                 if play_button.collidepoint(mouse_pos):
-                    return GameState.PLAY
+                    return GameState.PLACE_SHIPS
 
                 if settings_button.collidepoint(mouse_pos):
                     return GameState.SETTINGS
@@ -146,9 +149,6 @@ def play_screen(screen):
     placeable_ships = [2, 3, 3, 4, 5]
     ship_len = 0
     ship_orientation = [0, 0]
-
-    # Indicator if the player is done placing ships
-    all_done = False
 
     while True:
         for event in pygame.event.get():
@@ -207,8 +207,9 @@ def play_screen(screen):
                     ship_orientation = [1,0]
                 elif event.key == pygame.K_h: # Set the ship to horizontal orientation
                     ship_orientation = [0,1]
-                if event.key == pygame.K_d and placeable_ships == []:
-                    all_done = True
+                if event.key == pygame.K_d and placeable_ships == [] and choice == 2:
+                    # User is all done placing ships. Move on to AI ships
+                    return GameState.PLAY_AI
 
 
 
@@ -234,7 +235,55 @@ def play_screen(screen):
 
         pygame.display.update()
 
-        if all_done: return
+def play_ai(screen):
+    aigrid = []
+    for row in range(10):
+        # Add an empty array that will hold each cell
+        # in this row
+        aigrid.append([])
+        for column in range(10):
+            aigrid[row].append(0)  # Append a cell
+
+    WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
+    screen = pygame.display.set_mode(WINDOW_SIZE)
+
+    # Used to track current grid location mouse is in
+    curr_column = 10
+    curr_row = 10
+
+    while True:
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEMOTION: # Gets current mouse position
+                pos = pygame.mouse.get_pos()
+
+                curr_column = pos[0] // (WIDTH + MARGIN)
+                curr_row = pos[1] // (HEIGHT + MARGIN)
+
+        # Set the screen background
+        screen.fill(BLACK)
+
+        # Draw the grid
+        # if not all_ships_placed:
+        for row in range(10):
+            for column in range(10):
+                color = WHITE
+                if aigrid[row][column] == 1:
+                    color = GREEN
+                elif row == curr_row and column == curr_column:
+                    color = GRAY
+                pygame.draw.rect(screen,
+                                color,
+                                [(MARGIN + WIDTH) * column + MARGIN,
+                                (MARGIN + HEIGHT) * row + MARGIN,
+                                WIDTH,
+                                HEIGHT])
+
+
+        pygame.display.update()
 
 
 def settings_screen(screen):
@@ -471,8 +520,9 @@ def settings_screen(screen):
 class GameState(Enum):
     QUIT = -1
     TITLE = 0
-    PLAY = 1
+    PLACE_SHIPS = 1
     SETTINGS = 2
+    PLAY_AI = 3
 
 if __name__ == "__main__":
     main()
