@@ -23,8 +23,12 @@ BLUE = (0,105,148)
 #default is singleplayer (2 board)
 choice = 2
 debug = True
-difficulty = 0 #0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible
-difficulty_dict = {0:100, 1:60, 2:30, 3:10}
+difficulty = 3 #0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible
+difficulty_dict = {0:100, 1:60, 2:30, 3:17}
+
+# This probably doesn't need to be global, but I don't
+# care enough to pass this through every function call
+winner = ""
 
 #these probably shouldnt be global but im not gonna change that
 # This sets the WIDTH and HEIGHT of each grid location
@@ -34,10 +38,6 @@ HEIGHT = 70
 # This sets the margin between each cell
 MARGIN = 5
 
-# Player one grid
-
-# Player two/AI grid
-
 def main():
     pygame.init()
 
@@ -46,6 +46,7 @@ def main():
     fps = 60
 
     screen = pygame.display.set_mode((1000,1000))
+    pygame.display.set_caption('Battleship')
 
     game_state = GameState.TITLE
 
@@ -67,9 +68,12 @@ def main():
         if game_state == GameState.P1_TURN or game_state == GameState.P2_AI_TURN:
             for turn in range(difficulty_dict[difficulty]):
                 if turn%2 == 0 and game_state == GameState.P1_TURN: # Even turns is player one
-                    game_state = p1_turn(screen, oppgrid)
+                    game_state = p1_turn(screen, p1grid, oppgrid)
                 elif turn%2 == 1 and game_state == GameState.P2_AI_TURN: # Odd turns is player two/AI
-                    game_state = p2_ai_turn(screen, p1grid)
+                    game_state = p2_ai_turn(screen, p1grid, oppgrid)
+
+        if game_state == GameState.GAME_OVER:
+            game_state = game_end_screen(screen)
 
         if game_state == GameState.SETTINGS:
             game_state = settings_screen(screen)
@@ -323,8 +327,11 @@ def create_ai_grid_screen(screen, aigrid):
         for row in range(10):
             for column in range(10):
                 color = WHITE
-                if aigrid[row][column] == 1 and debug:
-                    color = PINK
+                if aigrid[row][column] == 1 and debug: # Showing ships in Debug mode
+                    if row == curr_row and column == curr_column:
+                        color = LIGHT_PINK
+                    else:
+                        color = PINK
                 elif row == curr_row and column == curr_column:
                     color = GRAY
                 pygame.draw.rect(screen,
@@ -337,7 +344,7 @@ def create_ai_grid_screen(screen, aigrid):
 
         pygame.display.update()
 
-def p1_turn(screen, aigrid):
+def p1_turn(screen, p1grid, aigrid):
     print("Entering p1 turn")
     WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
     screen = pygame.display.set_mode(WINDOW_SIZE)
@@ -376,8 +383,18 @@ def p1_turn(screen, aigrid):
             elif event.type == pygame.KEYDOWN: # The move has been made and turn is over
                 if event.key == pygame.K_d and move_made:
                     print("Move made, it's the opponents turn")
-                    time.sleep(2) # A small delay so they can see what they've done
-                    return GameState.P2_AI_TURN
+                    # Parse through the player's board to see if P1 won
+                    win_flag = True
+                    for row in aigrid:
+                        for col in row:
+                            if col == 1: win_flag = False
+                    if win_flag:
+                        print("You have sunk all of P2/AI's ships! Congratulations!")
+                        winner = "P1"
+                        return GameState.GAME_OVER
+                    else:
+                        time.sleep(2) # A small delay so they can see what they've done
+                        return GameState.P2_AI_TURN
 
         # Set the screen background
         screen.fill(BLACK)
@@ -408,7 +425,7 @@ def p1_turn(screen, aigrid):
 
         pygame.display.update()
 
-def p2_ai_turn(screen, p1grid):
+def p2_ai_turn(screen, p1grid, aigrid):
     print("Entering p2/ai turn")
     WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
     screen = pygame.display.set_mode(WINDOW_SIZE)
@@ -436,7 +453,17 @@ def p2_ai_turn(screen, p1grid):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
                     print("Acknowledged that player saw AI turn")
-                    return GameState.P1_TURN
+                    # Parse through the player's board to see if P2/AI won
+                    win_flag = True
+                    for row in p1grid:
+                        for col in row:
+                            if col == 1: win_flag = False
+                    if win_flag:
+                        print("P2/AI has sunk all of your ships, better luck next time!")
+                        winner = "P2/AI"
+                        return GameState.GAME_OVER
+                    else:
+                        return GameState.P1_TURN
 
         # Set the screen background
         screen.fill(BLACK)
@@ -463,6 +490,55 @@ def p2_ai_turn(screen, p1grid):
 
 
         pygame.display.update()
+
+def game_end_screen(screen):
+    WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
+    screen = pygame.display.set_mode(WINDOW_SIZE)
+    pygame.font.init()
+
+    myfont = pygame.font.SysFont('Comic Sans MS', 30)
+
+    if winner == "P1":
+        text = myfont.render("Congratulations! P1 has won!", False, (0, 0, 0))
+    elif winner == "P2/AI":
+        text = myfont.render("Sorry, P2/AI won this time, but try again!", False, (0, 0, 0))
+
+    textRect = text.get_rect()
+ 
+    # set the center of the rectangular object.
+    textRect.center = (WINDOW_SIZE[0] // 2, WINDOW_SIZE[1] // 2)
+    
+    # infinite loop
+    while True:
+    
+        # completely fill the surface object
+        # with white color
+        screen.fill(BLACK)
+    
+        # copying the text surface object
+        # to the display surface object
+        # at the center coordinate.
+        screen.blit(text, textRect)
+    
+        # iterate over the list of Event objects
+        # that was returned by pygame.event.get() method.
+        for event in pygame.event.get():
+    
+            # if event object type is QUIT
+            # then quitting the pygame
+            # and program both.
+            if event.type == pygame.QUIT:
+    
+                # deactivates the pygame library
+                pygame.quit()
+    
+                # quit the program.
+                quit()
+    
+            # Draws the surface object to the screen.
+            pygame.display.update()
+
+    return GameState.TITLE
 
 def settings_screen(screen):
     #must do this to change global variables without making them local
@@ -696,6 +772,7 @@ def settings_screen(screen):
 
 
 class GameState(Enum):
+    GAME_OVER = -2
     QUIT = -1
     TITLE = 0
     PLACE_SHIPS = 1
