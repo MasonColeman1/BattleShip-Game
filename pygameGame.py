@@ -2,6 +2,7 @@ import pygame
 import sys
 from enum import Enum
 import random
+import time
 
 #defining all the colors
 WHITE = (255,255,255)
@@ -13,13 +14,15 @@ RED = (255, 0, 0)
 GRAY = (211, 211, 211)
 ORANGE = (255,165,0)
 PINK = (255,105,180)
+LIGHT_PINK = (255,182,193)
+BLUE = (0,105,148)
 
 #THESE ARE THE SETTINGS VARIABLES
 #need to be global since settings mode and play mode need to access them
 #I am going to follow the logic group and just make a choice var
-#default is singleplayer (1 board)
+#default is singleplayer (2 board)
 choice = 2
-debug = False
+debug = True
 difficulty = 0 #0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible
 difficulty_dict = {0:100, 1:60, 2:30, 3:10}
 
@@ -63,10 +66,10 @@ def main():
 
         if game_state == GameState.P1_TURN or game_state == GameState.P2_AI_TURN:
             for turn in range(difficulty_dict[difficulty]):
-                if turn%2 == 0: # Even turns is player one
-                    game_state = GameState.P1_TURN
-                elif turn%2 == 1: # Odd turns is player two/AI
-                    game_state = GameState.P2_AI_TURN
+                if turn%2 == 0 and game_state == GameState.P1_TURN: # Even turns is player one
+                    game_state = p1_turn(screen, oppgrid)
+                elif turn%2 == 1 and game_state == GameState.P2_AI_TURN: # Odd turns is player two/AI
+                    game_state = p2_ai_turn(screen, p1grid)
 
         if game_state == GameState.SETTINGS:
             game_state = settings_screen(screen)
@@ -309,6 +312,7 @@ def create_ai_grid_screen(screen, aigrid):
                 curr_row = pos[1] // (HEIGHT + MARGIN)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
+                    print("Acknowledged that player saw AI place ships")
                     return GameState.P1_TURN
 
         # Set the screen background
@@ -319,7 +323,7 @@ def create_ai_grid_screen(screen, aigrid):
         for row in range(10):
             for column in range(10):
                 color = WHITE
-                if aigrid[row][column] == 1: # and debug:
+                if aigrid[row][column] == 1 and debug:
                     color = PINK
                 elif row == curr_row and column == curr_column:
                     color = GRAY
@@ -334,10 +338,131 @@ def create_ai_grid_screen(screen, aigrid):
         pygame.display.update()
 
 def p1_turn(screen, aigrid):
-    pass
+    print("Entering p1 turn")
+    WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
+    screen = pygame.display.set_mode(WINDOW_SIZE)
 
-def p2_ai_grid(screen, p1grid):
-    pass
+    # Used to track current grid location mouse is in
+    curr_column = 10
+    curr_row = 10
+
+    # Tracks if the move has been made
+    move_made = False
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if not move_made:
+                    # User clicks the mouse. Get the position
+                    pos = pygame.mouse.get_pos()
+                    # Change the x/y screen coordinates to grid coordinates
+                    column = pos[0] // (WIDTH + MARGIN)
+                    row = pos[1] // (HEIGHT + MARGIN)
+
+                    if aigrid[row][column] == 1: # If there's a ship, it's a hit
+                        aigrid[row][column] = 2
+                    elif aigrid[row][column] == 0: # Otherwise it's a miss
+                        aigrid[row][column] = -1
+                    move_made = True
+                else:
+                    print("You've made your move! Press 'D' to complete your turn.")
+            elif event.type == pygame.MOUSEMOTION: # Gets current mouse position
+                pos = pygame.mouse.get_pos()
+                curr_column = pos[0] // (WIDTH + MARGIN)
+                curr_row = pos[1] // (HEIGHT + MARGIN)
+            elif event.type == pygame.KEYDOWN: # The move has been made and turn is over
+                if event.key == pygame.K_d and move_made:
+                    print("Move made, it's the opponents turn")
+                    time.sleep(2) # A small delay so they can see what they've done
+                    return GameState.P2_AI_TURN
+
+        # Set the screen background
+        screen.fill(BLACK)
+
+        # Draw the grid
+        # if not all_ships_placed:
+        for row in range(10):
+            for column in range(10):
+                color = WHITE
+                if aigrid[row][column] == 1 and debug: # Showing ships in Debug mode
+                    if row == curr_row and column == curr_column:
+                        color = LIGHT_PINK
+                    else:
+                        color = PINK
+                elif aigrid[row][column] == 2: # Hits in red
+                    color = RED
+                elif aigrid[row][column] == -1: # misses in blue
+                    color = BLUE
+                elif row == curr_row and column == curr_column:
+                    color = GRAY
+                pygame.draw.rect(screen,
+                                color,
+                                [(MARGIN + WIDTH) * column + MARGIN,
+                                (MARGIN + HEIGHT) * row + MARGIN,
+                                WIDTH,
+                                HEIGHT])
+
+
+        pygame.display.update()
+
+def p2_ai_turn(screen, p1grid):
+    print("Entering p2/ai turn")
+    WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
+    screen = pygame.display.set_mode(WINDOW_SIZE)
+
+    # Used to track current grid location mouse is in
+    curr_column = 10
+    curr_row = 10
+
+    # AI picks a random spot to hit
+    while True:
+        row_shot, col_shot = random.randint(0,9), random.randint(0,9) # Pick a random spot to hit
+        if p1grid[row_shot][col_shot] != 2 or p1grid[row_shot][col_shot] != -1: # If spot hasn't been shot at yet
+            if p1grid[row_shot][col_shot] == 1: # If there's a ship, mark as hit
+                p1grid[row_shot][col_shot] = 2
+                break
+            elif p1grid[row_shot][col_shot] == 0: # If there's water, mark as miss
+                p1grid[row_shot][col_shot] = -1
+                break
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_d:
+                    print("Acknowledged that player saw AI turn")
+                    return GameState.P1_TURN
+
+        # Set the screen background
+        screen.fill(BLACK)
+
+        # Draw the grid
+        # if not all_ships_placed:
+        for row in range(10):
+            for column in range(10):
+                color = WHITE
+                if p1grid[row][column] == 1: # Showing ships in Debug mode
+                    color = GREEN
+                elif p1grid[row][column] == 2: # Hits in red
+                    color = RED
+                elif p1grid[row][column] == -1: # misses in blue
+                    color = BLUE
+                elif row == curr_row and column == curr_column:
+                    color = GRAY
+                pygame.draw.rect(screen,
+                                color,
+                                [(MARGIN + WIDTH) * column + MARGIN,
+                                (MARGIN + HEIGHT) * row + MARGIN,
+                                WIDTH,
+                                HEIGHT])
+
+
+        pygame.display.update()
 
 def settings_screen(screen):
     #must do this to change global variables without making them local
