@@ -21,6 +21,7 @@ PINK = (255,105,180)
 choice = 2
 debug = False
 difficulty = 0 #0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible
+difficulty_dict = {0:100, 1:60, 2:30, 3:10}
 
 #these probably shouldnt be global but im not gonna change that
 # This sets the WIDTH and HEIGHT of each grid location
@@ -55,10 +56,17 @@ def main():
             game_state = title_screen(screen)
 
         if game_state == GameState.PLACE_SHIPS:
-            game_state = play_screen(screen, p1grid)
+            game_state = place_ships_screen(screen, p1grid)
 
-        if game_state == GameState.PLAY_AI:
-            game_state = play_ai_screen(screen, oppgrid)
+        if game_state == GameState.AI_PLACE_SHIPS:
+            game_state = create_ai_grid_screen(screen, oppgrid)
+
+        if game_state == GameState.P1_TURN or game_state == GameState.P2_AI_TURN:
+            for turn in range(difficulty_dict[difficulty]):
+                if turn%2 == 0: # Even turns is player one
+                    game_state = GameState.P1_TURN
+                elif turn%2 == 1: # Odd turns is player two/AI
+                    game_state = GameState.P2_AI_TURN
 
         if game_state == GameState.SETTINGS:
             game_state = settings_screen(screen)
@@ -138,7 +146,7 @@ def title_screen(screen):
         # updates the frames of the game
         pygame.display.update()
 
-def play_screen(screen, p1grid):
+def place_ships_screen(screen, p1grid):
     for row in range(10):
         # Add an empty array that will hold each cell
         # in this row
@@ -217,7 +225,7 @@ def play_screen(screen, p1grid):
                     ship_orientation = [0,1]
                 if event.key == pygame.K_d and placeable_ships == [] and choice == 2:
                     # User is all done placing ships. Move on to AI ships
-                    return GameState.PLAY_AI
+                    return GameState.AI_PLACE_SHIPS
 
 
 
@@ -243,7 +251,7 @@ def play_screen(screen, p1grid):
 
         pygame.display.update()
 
-def play_ai_screen(screen, aigrid):
+def create_ai_grid_screen(screen, aigrid):
     for row in range(10):
         # Add an empty array that will hold each cell
         # in this row
@@ -299,6 +307,9 @@ def play_ai_screen(screen, aigrid):
 
                 curr_column = pos[0] // (WIDTH + MARGIN)
                 curr_row = pos[1] // (HEIGHT + MARGIN)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_d:
+                    return GameState.P1_TURN
 
         # Set the screen background
         screen.fill(BLACK)
@@ -322,6 +333,11 @@ def play_ai_screen(screen, aigrid):
 
         pygame.display.update()
 
+def p1_turn(screen, aigrid):
+    pass
+
+def p2_ai_grid(screen, p1grid):
+    pass
 
 def settings_screen(screen):
     #must do this to change global variables without making them local
@@ -559,7 +575,9 @@ class GameState(Enum):
     TITLE = 0
     PLACE_SHIPS = 1
     SETTINGS = 2
-    PLAY_AI = 3
+    AI_PLACE_SHIPS = 3
+    P1_TURN = 4
+    P2_AI_TURN = 5
 
 if __name__ == "__main__":
     main()
