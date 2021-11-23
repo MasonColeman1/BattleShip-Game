@@ -71,6 +71,8 @@ def main():
                     game_state = p1_turn(screen, p1grid, oppgrid)
                 elif turn%2 == 1 and game_state == GameState.P2_AI_TURN: # Odd turns is player two/AI
                     game_state = p2_ai_turn(screen, p1grid, oppgrid)
+            winner = "Tie"
+            game_state = GameState.GAME_OVER
 
         if game_state == GameState.GAME_OVER:
             game_state = game_end_screen(screen)
@@ -492,51 +494,53 @@ def p2_ai_turn(screen, p1grid, aigrid):
         pygame.display.update()
 
 def game_end_screen(screen):
-    WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
-    screen = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.font.init()
+    # WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
+    # screen = pygame.display.set_mode(WINDOW_SIZE)
+    # pygame.font.init()
 
-    myfont = pygame.font.SysFont('Comic Sans MS', 30)
+    # myfont = pygame.font.SysFont('Comic Sans MS', 30)
 
-    if winner == "P1":
-        text = myfont.render("Congratulations! P1 has won!", False, (0, 0, 0))
-    elif winner == "P2/AI":
-        text = myfont.render("Sorry, P2/AI won this time, but try again!", False, (0, 0, 0))
+    # if winner == "P1":
+    #     text = myfont.render("Congratulations! P1 has won!", False, (0, 0, 0))
+    # elif winner == "P2/AI":
+    #     text = myfont.render("Sorry, P2/AI won this time, but try again!", False, (0, 0, 0))
+    # elif winner = "Tie":
+    #     text = myfont.render("Whoa, a tie! Nobody managed to sink all of their opponent's ships.", False, (0, 0, 0))
 
-    textRect = text.get_rect()
+    # textRect = text.get_rect()
  
-    # set the center of the rectangular object.
-    textRect.center = (WINDOW_SIZE[0] // 2, WINDOW_SIZE[1] // 2)
+    # # set the center of the rectangular object.
+    # textRect.center = (WINDOW_SIZE[0] // 2, WINDOW_SIZE[1] // 2)
     
-    # infinite loop
-    while True:
+    # # infinite loop
+    # while True:
     
-        # completely fill the surface object
-        # with white color
-        screen.fill(BLACK)
+    #     # completely fill the surface object
+    #     # with white color
+    #     screen.fill(BLACK)
     
-        # copying the text surface object
-        # to the display surface object
-        # at the center coordinate.
-        screen.blit(text, textRect)
+    #     # copying the text surface object
+    #     # to the display surface object
+    #     # at the center coordinate.
+    #     screen.blit(text, textRect)
     
-        # iterate over the list of Event objects
-        # that was returned by pygame.event.get() method.
-        for event in pygame.event.get():
+    #     # iterate over the list of Event objects
+    #     # that was returned by pygame.event.get() method.
+    #     for event in pygame.event.get():
     
-            # if event object type is QUIT
-            # then quitting the pygame
-            # and program both.
-            if event.type == pygame.QUIT:
+    #         # if event object type is QUIT
+    #         # then quitting the pygame
+    #         # and program both.
+    #         if event.type == pygame.QUIT:
     
-                # deactivates the pygame library
-                pygame.quit()
+    #             # deactivates the pygame library
+    #             pygame.quit()
     
-                # quit the program.
-                quit()
+    #             # quit the program.
+    #             quit()
     
-            # Draws the surface object to the screen.
-            pygame.display.update()
+    #         # Draws the surface object to the screen.
+    #         pygame.display.update()
 
     return GameState.TITLE
 
