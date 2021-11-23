@@ -30,6 +30,10 @@ HEIGHT = 70
 # This sets the margin between each cell
 MARGIN = 5
 
+# Player one grid
+
+# Player two/AI grid
+
 def main():
     pygame.init()
 
@@ -41,6 +45,9 @@ def main():
 
     game_state = GameState.TITLE
 
+    p1grid = []
+    oppgrid = []
+
     while True:
         clock.tick(fps)
 
@@ -48,10 +55,10 @@ def main():
             game_state = title_screen(screen)
 
         if game_state == GameState.PLACE_SHIPS:
-            game_state = play_screen(screen)
+            game_state = play_screen(screen, p1grid)
 
         if game_state == GameState.PLAY_AI:
-            game_state = play_ai_screen(screen)
+            game_state = play_ai_screen(screen, oppgrid)
 
         if game_state == GameState.SETTINGS:
             game_state = settings_screen(screen)
@@ -131,8 +138,7 @@ def title_screen(screen):
         # updates the frames of the game
         pygame.display.update()
 
-def play_screen(screen):
-    p1grid = []
+def play_screen(screen, p1grid):
     for row in range(10):
         # Add an empty array that will hold each cell
         # in this row
@@ -237,8 +243,7 @@ def play_screen(screen):
 
         pygame.display.update()
 
-def play_ai_screen(screen):
-    aigrid = []
+def play_ai_screen(screen, aigrid):
     for row in range(10):
         # Add an empty array that will hold each cell
         # in this row
@@ -270,12 +275,10 @@ def play_ai_screen(screen):
         #     if aigrid[row+(checksquare*ship_orientation[0])][col+(checksquare*ship_orientation[1])] == 1:
         #         overlap = True
         # Place the ship in the aigrid only if no overlap
-        if not overlap:
+        if overlap == False:
             for square in range(ship):
                 aigrid[row+(square*ship_orientation[0])][col+(square*ship_orientation[1])] = 1
-                # print(row+(square*ship_orientation[0]), col+(square*ship_orientation[1]))
             placeable_ships.remove(ship)
-            # print(col, row, ("vertical" if ship_orientation==[1,0] else "horizontal"))
     
     # Print the aigrid in console (For debugging purposes)
     # print(placeable_ships)
@@ -305,7 +308,7 @@ def play_ai_screen(screen):
         for row in range(10):
             for column in range(10):
                 color = WHITE
-                if aigrid[row][column] == 1:
+                if aigrid[row][column] == 1: # and debug:
                     color = PINK
                 elif row == curr_row and column == curr_column:
                     color = GRAY
