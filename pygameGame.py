@@ -66,7 +66,7 @@ def main():
             game_state = create_ai_grid_screen(screen, oppgrid)
 
         if game_state == GameState.P1_TURN or game_state == GameState.P2_AI_TURN:
-            for turn in range(difficulty_dict[difficulty]):
+            for turn in range(difficulty_dict[difficulty]*2):
                 if turn%2 == 0 and game_state == GameState.P1_TURN: # Even turns is player one
                     game_state = p1_turn(screen, p1grid, oppgrid)
                 elif turn%2 == 1 and game_state == GameState.P2_AI_TURN: # Odd turns is player two/AI
