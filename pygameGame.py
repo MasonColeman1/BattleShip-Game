@@ -21,7 +21,7 @@ BLUE = (0,105,148)
 #need to be global since settings mode and play mode need to access them
 #I am going to follow the logic group and just make a choice var
 #default is singleplayer (1 board)
-choice = 1 #1 - One board, 2 - Two boards, 3 - PvP, 4 - PvPvP
+choice = 2 #1 - One board, 2 - Two boards, 3 - PvP, 4 - PvPvP
 debug = True
 difficulty = 3 #0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible
 difficulty_dict = {0:100, 1:60, 2:30, 3:17}
@@ -202,24 +202,44 @@ def place_ships_screen(screen, p1grid):
                 column = pos[0] // (WIDTH + MARGIN)
                 row = pos[1] // (HEIGHT + MARGIN)
 
-                #makes sure player cannot shoot same square twice
+                # handle invalid selections
                 if ship_len == 0 or ship_orientation == [0, 0]: # Just in case they try to place without choosing anything
                     print("Invalid ship placement options")
                     continue
-                else: print("ship will be " + ("vertical" if ship_orientation[0] else "horizontal") + " with length " + str(ship_len))
+                else: print("Ship will be " + ("vertical" if ship_orientation[0] else "horizontal") + " with length " + str(ship_len))
+
+                # Handle the ship being out of bounds
+                if ship_orientation == [1,0] and row > 10-ship_len:
+                    print("Ship would go off the bottom of the screen")
+                    placeable_ships.append(ship_len)
+                    break
+                elif ship_orientation == [0,1] and column > 10-ship_len:
+                    print("Ship would go off the right side of the screen")
+                    placeable_ships.append(ship_len)
+                    break
+                else: print("Should be all good!")
+
+                # Change all spots on the grid corresponding to the ship
+                overlap_flag = False
+                prev_values = []
                 for spot in range(ship_len):
-                    if p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] == 0:
-                        # Set that location to one
-                        p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 1
-                        print("Click ", pos, "Grid coordinates: ", row, column)
-                    else: # overlap is detected
-                        print("Overlap detected, but how do we \'roll back\' the changes??")
-                        spot_to_keep = [row+(spot*ship_orientation[0]), column+(spot*ship_orientation[1])]
-                        for spot in range(ship_len):
-                            p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 0
-                        p1grid[spot_to_keep[0]][spot_to_keep[1]] = 1
-                        placeable_ships.append(ship_len)
-                        break
+                    
+                    # Set that location to one
+                    prev_values.append(p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])])
+                    p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 1
+                    print("Click ", pos, "Grid coordinates: ", row, column)
+                    if prev_values[spot] == 1: # overlap is detected
+                        overlap_flag = True
+                    
+                if overlap_flag: # Roll back all changes
+                    print("There was an overlap, let's roll everything back")
+                    for space_to_revert in range(ship_len):
+                        p1grid[row + (space_to_revert * ship_orientation[0])][column + (space_to_revert * ship_orientation[1])] = prev_values.pop(0)
+                    placeable_ships.append(ship_len)
+                else:
+                    print("Ship fully placed!")
+
+
                 # Making sure the ship can't be placed a second time (resetting it essentially)
                 ship_len = 0
                 ship_orientation = [0, 0]
