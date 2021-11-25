@@ -20,15 +20,11 @@ BLUE = (0,105,148)
 #THESE ARE THE SETTINGS VARIABLES
 #need to be global since settings mode and play mode need to access them
 #I am going to follow the logic group and just make a choice var
-#default is singleplayer (2 board)
-choice = 2
+#default is singleplayer (1 board)
+choice = 1 #1 - One board, 2 - Two boards, 3 - PvP, 4 - PvPvP
 debug = True
 difficulty = 3 #0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible
 difficulty_dict = {0:100, 1:60, 2:30, 3:17}
-
-# This probably doesn't need to be global, but I don't
-# care enough to pass this through every function call
-winner = ""
 
 #these probably shouldnt be global but im not gonna change that
 # This sets the WIDTH and HEIGHT of each grid location
@@ -52,6 +48,7 @@ def main():
 
     p1grid = []
     oppgrid = []
+    winner = ""
 
     while True:
         clock.tick(fps)
@@ -59,20 +56,33 @@ def main():
         if game_state == GameState.TITLE:
             game_state = title_screen(screen)
 
-        if game_state == GameState.PLACE_SHIPS:
-            game_state = place_ships_screen(screen, p1grid)
+        if choice == 1:
+            if game_state == GameState.AI_PLACE_SHIPS:
+                game_state = create_ai_grid_screen(screen, oppgrid)
+            
+            if game_state == GameState.P1_TURN:
+                for turn in range(difficulty_dict[difficulty]):
+                    game_state = p1_turn(screen, oppgrid)
+                if winner == "":
+                    winner = "Tie"
+                game_state = GameState.GAME_OVER
 
-        if game_state == GameState.AI_PLACE_SHIPS:
-            game_state = create_ai_grid_screen(screen, oppgrid)
+        if choice == 2:
+            if game_state == GameState.PLACE_SHIPS:
+                game_state = place_ships_screen(screen, p1grid)
 
-        if game_state == GameState.P1_TURN or game_state == GameState.P2_AI_TURN:
-            for turn in range(difficulty_dict[difficulty]*2):
-                if turn%2 == 0 and game_state == GameState.P1_TURN: # Even turns is player one
-                    game_state = p1_turn(screen, p1grid, oppgrid)
-                elif turn%2 == 1 and game_state == GameState.P2_AI_TURN: # Odd turns is player two/AI
-                    game_state = p2_ai_turn(screen, p1grid, oppgrid)
-            winner = "Tie"
-            game_state = GameState.GAME_OVER
+            if game_state == GameState.AI_PLACE_SHIPS:
+                game_state = create_ai_grid_screen(screen, oppgrid)
+
+            if game_state == GameState.P1_TURN or game_state == GameState.P2_AI_TURN:
+                for turn in range(difficulty_dict[difficulty]*2):
+                    if turn%2 == 0 and game_state == GameState.P1_TURN: # Even turns is player one
+                        game_state = p1_turn(screen, oppgrid)
+                    elif turn%2 == 1 and game_state == GameState.P2_AI_TURN: # Odd turns is player two/AI
+                        game_state = p2_ai_turn(screen, p1grid)
+                if winner == "":
+                    winner = "Tie"
+                game_state = GameState.GAME_OVER
 
         if game_state == GameState.GAME_OVER:
             game_state = game_end_screen(screen)
@@ -120,7 +130,10 @@ def title_screen(screen):
                     return GameState.QUIT
 
                 if play_button.collidepoint(mouse_pos):
-                    return GameState.PLACE_SHIPS
+                    if choice == 1:
+                        return GameState.AI_PLACE_SHIPS
+                    elif choice == 2:
+                        return GameState.PLACE_SHIPS
 
                 if settings_button.collidepoint(mouse_pos):
                     return GameState.SETTINGS
@@ -348,7 +361,7 @@ def create_ai_grid_screen(screen, aigrid):
 
         pygame.display.update()
 
-def p1_turn(screen, p1grid, aigrid):
+def p1_turn(screen, aigrid):
     print("Entering p1 turn")
     WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
     screen = pygame.display.set_mode(WINDOW_SIZE)
@@ -397,8 +410,12 @@ def p1_turn(screen, p1grid, aigrid):
                         winner = "P1"
                         return GameState.GAME_OVER
                     else:
-                        time.sleep(2) # A small delay so they can see what they've done
-                        return GameState.P2_AI_TURN
+                        if choice == 1:
+                            time.sleep(1)
+                            return GameState.P1_TURN
+                        elif choice == 2:
+                            time.sleep(2) # A small delay so they can see what they've done
+                            return GameState.P2_AI_TURN
 
         # Set the screen background
         screen.fill(BLACK)
@@ -429,7 +446,7 @@ def p1_turn(screen, p1grid, aigrid):
 
         pygame.display.update()
 
-def p2_ai_turn(screen, p1grid, aigrid):
+def p2_ai_turn(screen, p1grid):
     print("Entering p2/ai turn")
     WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
     screen = pygame.display.set_mode(WINDOW_SIZE)
