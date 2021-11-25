@@ -288,14 +288,16 @@ def create_ai_grid_screen(screen, aigrid):
         col, row = random.randint(0,10-ship-1), random.randint(0,10-ship-1)
         ship_orientation = [1,0] if random.randint(0,1) else [0,1]
         # Check for overlaps
-        # for checksquare in range(ship):
-        #     if aigrid[row+(checksquare*ship_orientation[0])][col+(checksquare*ship_orientation[1])] == 1:
-        #         overlap = True
+        for square in range(ship):
+            if aigrid[row+(square*ship_orientation[0])][col+(square*ship_orientation[1])] == 1:
+                overlap = True
         # Place the ship in the aigrid only if no overlap
         if overlap == False:
             for square in range(ship):
                 aigrid[row+(square*ship_orientation[0])][col+(square*ship_orientation[1])] = 1
             placeable_ships.remove(ship)
+        else:
+            overlap = False
     
     # Print the aigrid in console (For debugging purposes)
     # print(placeable_ships)
