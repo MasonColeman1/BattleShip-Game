@@ -28,11 +28,11 @@ difficulty_dict = {0:100, 1:60, 2:30, 3:17}
 
 #these probably shouldnt be global but im not gonna change that
 # This sets the WIDTH and HEIGHT of each grid location
-WIDTH = 70
-HEIGHT = 70
+WIDTH = 90
+HEIGHT = 90
 
 # This sets the margin between each cell
-MARGIN = 5
+MARGIN = 10
 
 def main():
     pygame.init()
@@ -59,7 +59,7 @@ def main():
         if choice == 1:
             if game_state == GameState.AI_PLACE_SHIPS:
                 game_state = create_ai_grid_screen(screen, oppgrid)
-            
+
             if game_state == GameState.P1_TURN:
                 for turn in range(difficulty_dict[difficulty]):
                     game_state = p1_turn(screen, oppgrid)
@@ -98,7 +98,7 @@ def main():
 def title_screen(screen):
 
     #background title screen if not work change reference to local
-    bg_title = pygame.image.load('title_art.png')
+    bg_title = pygame.image.load(r"C:\Users\resur\OneDrive\Documents\School\CS 3100\group6-cs3100\title_art.png")
 
     # defining a font
     smallfont = pygame.font.SysFont('Corbel',35)
@@ -223,14 +223,14 @@ def place_ships_screen(screen, p1grid):
                 overlap_flag = False
                 prev_values = []
                 for spot in range(ship_len):
-                    
+
                     # Set that location to one
                     prev_values.append(p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])])
                     p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 1
                     print("Click ", pos, "Grid coordinates: ", row, column)
                     if prev_values[spot] == 1: # overlap is detected
                         overlap_flag = True
-                    
+
                 if overlap_flag: # Roll back all changes
                     print("There was an overlap, let's roll everything back")
                     for space_to_revert in range(ship_len):
@@ -331,7 +331,7 @@ def create_ai_grid_screen(screen, aigrid):
             placeable_ships.remove(ship)
         else:
             overlap = False
-    
+
     # Print the aigrid in console (For debugging purposes)
     # print(placeable_ships)
     # for i in aigrid:
@@ -547,37 +547,37 @@ def game_end_screen(screen):
     #     text = myfont.render("Whoa, a tie! Nobody managed to sink all of their opponent's ships.", False, (0, 0, 0))
 
     # textRect = text.get_rect()
- 
+
     # # set the center of the rectangular object.
     # textRect.center = (WINDOW_SIZE[0] // 2, WINDOW_SIZE[1] // 2)
-    
+
     # # infinite loop
     # while True:
-    
+
     #     # completely fill the surface object
     #     # with white color
     #     screen.fill(BLACK)
-    
+
     #     # copying the text surface object
     #     # to the display surface object
     #     # at the center coordinate.
     #     screen.blit(text, textRect)
-    
+
     #     # iterate over the list of Event objects
     #     # that was returned by pygame.event.get() method.
     #     for event in pygame.event.get():
-    
+
     #         # if event object type is QUIT
     #         # then quitting the pygame
     #         # and program both.
     #         if event.type == pygame.QUIT:
-    
+
     #             # deactivates the pygame library
     #             pygame.quit()
-    
+
     #             # quit the program.
     #             quit()
-    
+
     #         # Draws the surface object to the screen.
     #         pygame.display.update()
 
