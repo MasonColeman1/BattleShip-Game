@@ -22,17 +22,18 @@ BLUE = (0,105,148)
 #I am going to follow the logic group and just make a choice var
 #default is singleplayer (1 board)
 choice = 2 #1 - One board, 2 - Two boards, 3 - PvP, 4 - PvPvP
-debug = True
+debug = False #i dont know why this was default true so I changed it
+additional_ships = False #xtra criteria
 difficulty = 3 #0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible
 difficulty_dict = {0:100, 1:60, 2:30, 3:17}
 
 #these probably shouldnt be global but im not gonna change that
 # This sets the WIDTH and HEIGHT of each grid location
-WIDTH = 70
-HEIGHT = 70
+WIDTH = 90
+HEIGHT = 90
 
 # This sets the margin between each cell
-MARGIN = 5
+MARGIN = 10
 
 def main():
     pygame.init()
@@ -59,7 +60,7 @@ def main():
         if choice == 1:
             if game_state == GameState.AI_PLACE_SHIPS:
                 game_state = create_ai_grid_screen(screen, oppgrid)
-            
+
             if game_state == GameState.P1_TURN:
                 for turn in range(difficulty_dict[difficulty]):
                     game_state = p1_turn(screen, oppgrid)
@@ -90,6 +91,9 @@ def main():
         if game_state == GameState.SETTINGS:
             game_state = settings_screen(screen)
 
+        if game_state == GameState.INSTRUCTIONS:
+            game_state = instructions_screen(screen)
+
         if game_state == GameState.QUIT:
             pygame.quit()
             sys.exit()
@@ -98,7 +102,7 @@ def main():
 def title_screen(screen):
 
     #background title screen if not work change reference to local
-    bg_title = pygame.image.load('title_art.png')
+    bg_title = pygame.image.load(r"C:\Users\resur\OneDrive\Documents\School\CS 3100\group6-cs3100\title_art.png")
 
     # defining a font
     smallfont = pygame.font.SysFont('Corbel',35)
@@ -107,12 +111,13 @@ def title_screen(screen):
     quit_text = smallfont.render('quit' , True , WHITE)
     settings_text = smallfont.render('settings', True, WHITE)
     play_text = smallfont.render('play', True, WHITE)
+    instructions_text = smallfont.render('instructions', True, WHITE)
 
-    #MASONS BUTTONS BITCH
     #x pos, y pos, width, height
-    quit_button = pygame.Rect(430,550,140,40)
-    settings_button = pygame.Rect(430,490,140,40)
-    play_button = pygame.Rect(430,430,140,40)
+    quit_button = pygame.Rect(420,610,160,40)
+    settings_button = pygame.Rect(420,490,160,40)
+    play_button = pygame.Rect(420,430,160,40)
+    instructions_button = pygame.Rect(420,550,160,40)
 
     while True:
         for event in pygame.event.get():
@@ -138,6 +143,9 @@ def title_screen(screen):
                 if settings_button.collidepoint(mouse_pos):
                     return GameState.SETTINGS
 
+                if instructions_button.collidepoint(mouse_pos):
+                    return GameState.INSTRUCTIONS
+
         screen.blit(bg_title, (0,0))
 
         # stores the (x,y) coordinates into
@@ -160,10 +168,16 @@ def title_screen(screen):
         else:
             pygame.draw.rect(screen, DARK_GRAY, play_button)
 
+        if instructions_button.collidepoint(mouse):
+            pygame.draw.rect(screen, LIGHT_GRAY, instructions_button)
+        else:
+            pygame.draw.rect(screen, DARK_GRAY, instructions_button)
+
         # superimposing the text onto buttons
-        screen.blit(quit_text , (470,550))
+        screen.blit(quit_text , (470,610))
         screen.blit(settings_text, (445,490))
         screen.blit(play_text, (470,430))
+        screen.blit(instructions_text, (420,550))
 
         # updates the frames of the game
         pygame.display.update()
@@ -223,14 +237,14 @@ def place_ships_screen(screen, p1grid):
                 overlap_flag = False
                 prev_values = []
                 for spot in range(ship_len):
-                    
+
                     # Set that location to one
                     prev_values.append(p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])])
                     p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 1
                     print("Click ", pos, "Grid coordinates: ", row, column)
                     if prev_values[spot] == 1: # overlap is detected
                         overlap_flag = True
-                    
+
                 if overlap_flag: # Roll back all changes
                     print("There was an overlap, let's roll everything back")
                     for space_to_revert in range(ship_len):
@@ -331,7 +345,7 @@ def create_ai_grid_screen(screen, aigrid):
             placeable_ships.remove(ship)
         else:
             overlap = False
-    
+
     # Print the aigrid in console (For debugging purposes)
     # print(placeable_ships)
     # for i in aigrid:
@@ -547,45 +561,86 @@ def game_end_screen(screen):
     #     text = myfont.render("Whoa, a tie! Nobody managed to sink all of their opponent's ships.", False, (0, 0, 0))
 
     # textRect = text.get_rect()
- 
+
     # # set the center of the rectangular object.
     # textRect.center = (WINDOW_SIZE[0] // 2, WINDOW_SIZE[1] // 2)
-    
+
     # # infinite loop
     # while True:
-    
+
     #     # completely fill the surface object
     #     # with white color
     #     screen.fill(BLACK)
-    
+
     #     # copying the text surface object
     #     # to the display surface object
     #     # at the center coordinate.
     #     screen.blit(text, textRect)
-    
+
     #     # iterate over the list of Event objects
     #     # that was returned by pygame.event.get() method.
     #     for event in pygame.event.get():
-    
+
     #         # if event object type is QUIT
     #         # then quitting the pygame
     #         # and program both.
     #         if event.type == pygame.QUIT:
-    
+
     #             # deactivates the pygame library
     #             pygame.quit()
-    
+
     #             # quit the program.
     #             quit()
-    
+
     #         # Draws the surface object to the screen.
     #         pygame.display.update()
 
-    return GameState.TITLE
+    #IM JUST GONNA LEAVE ALL THAT FOR NOW
+    screen.fill(BLACK)
+
+    game_over_font = pygame.font.SysFont('verdana', 130, bold=True)
+    button_font = pygame.font.SysFont('arial', 50)
+
+    game_over_text = game_over_font.render('Game Over', True, RED)
+
+    back_text = button_font.render('Title', True, WHITE)
+
+    back_button = pygame.Rect(400,650,200,75)
+
+    while True:
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            #checks if a mouse is clicked
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+
+                if back_button.collidepoint(mouse_pos):
+                    return GameState.TITLE
+
+        #get mouse position
+        mouse = pygame.mouse.get_pos()
+
+        #draw buttons
+        if back_button.collidepoint(mouse):
+            pygame.draw.rect(screen, LIGHT_GRAY, back_button)
+        else:
+            pygame.draw.rect(screen, DARK_GRAY, back_button)
+
+        screen.blit(back_text, (450,660))
+
+        screen.blit(game_over_text, (100,350))
+
+        pygame.display.update()
+
+
 
 def settings_screen(screen):
     #must do this to change global variables without making them local
-    global choice, debug, difficulty
+    global choice, debug, difficulty, additional_ships
 
     screen.fill(BLACK)
 
@@ -603,9 +658,15 @@ def settings_screen(screen):
     one_board_text = button_font.render('1 board', True, WHITE)
     two_board_text = button_font.render('2 boards', True, WHITE)
 
-    multiplayer_text = button_font.render('multiplayer', True, WHITE)
-    two_player_text = button_font.render('1 v 1', True, WHITE)
-    three_player_text = button_font.render('1 v 1 v 1', True, WHITE)
+    #commented as we have not implemented these features
+    #multiplayer_text = button_font.render('multiplayer', True, WHITE)
+    #two_player_text = button_font.render('1 v 1', True, WHITE)
+    #three_player_text = button_font.render('1 v 1 v 1', True, WHITE)
+
+    #replacement for above
+    additional_ships_text = button_font.render('additional ships', True, WHITE)
+    additional_ships_on_text = button_font.render('on', True, WHITE)
+    additional_ships_off_text = button_font.render('off', True, WHITE)
 
     debug_text = button_font.render('debug', True, WHITE)
     debug_off_text = button_font.render('off', True, WHITE)
@@ -625,9 +686,14 @@ def settings_screen(screen):
     one_board_button = pygame.Rect(500,150,220,100)
     two_board_button = pygame.Rect(750,150,220,100)
 
-    multiplayer_button = pygame.Rect(50,300,350,100)
-    two_player_button = pygame.Rect(500,300,220,100)
-    three_player_button = pygame.Rect(750,300,220,100)
+    #multiplayer_button = pygame.Rect(50,300,350,100)
+    #two_player_button = pygame.Rect(500,300,220,100)
+    #three_player_button = pygame.Rect(750,300,220,100)
+
+    #replacedddddd
+    additional_ships_button = pygame.Rect(50,300,350,100)
+    additional_ships_off_button = pygame.Rect(500,300,220,100)
+    additional_ships_on_button = pygame.Rect(750,300,220,100)
 
     debug_button = pygame.Rect(50,600,350,100)
     debug_off_button = pygame.Rect(500,600,220,100)
@@ -659,20 +725,25 @@ def settings_screen(screen):
                     if choice != 1 and choice != 2:
                         choice = 1 #1 by default
 
-                if multiplayer_button.collidepoint(mouse_pos):
+                #if multiplayer_button.collidepoint(mouse_pos):
                     #prevents clicking multiplayer and changing from 1v1v1 to 1v1
-                    if choice != 3 and choice != 4:
-                        choice = 3 #3 by default
+                    #if choice != 3 and choice != 4:
+                        #choice = 3 #3 by default
 
                 if one_board_button.collidepoint(mouse_pos):
                     choice = 1
                 if two_board_button.collidepoint(mouse_pos):
                     choice = 2
 
-                if two_player_button.collidepoint(mouse_pos):
-                    choice = 3
-                if three_player_button.collidepoint(mouse_pos):
-                    choice = 4
+                #if two_player_button.collidepoint(mouse_pos):
+                    #choice = 3
+                #if three_player_button.collidepoint(mouse_pos):
+                    #choice = 4
+
+                if additional_ships_off_button.collidepoint(mouse_pos):
+                    additional_ships = False
+                if additional_ships_on_button.collidepoint(mouse_pos):
+                    additional_ships = True
 
                 if debug_off_button.collidepoint(mouse_pos):
                     debug = False
@@ -705,13 +776,7 @@ def settings_screen(screen):
             pygame.draw.rect(screen, LIGHT_GRAY, singleplayer_button)
         else:
             pygame.draw.rect(screen, DARK_GRAY, singleplayer_button)
-        #multiplayer
-        if choice == 3 or choice == 4:
-            pygame.draw.rect(screen, ORANGE, multiplayer_button)
-        elif multiplayer_button.collidepoint(mouse):
-            pygame.draw.rect(screen, LIGHT_GRAY, multiplayer_button)
-        else:
-            pygame.draw.rect(screen, DARK_GRAY, multiplayer_button)
+
         #one board
         if choice == 1:
             pygame.draw.rect(screen, GREEN, one_board_button)
@@ -726,20 +791,44 @@ def settings_screen(screen):
             pygame.draw.rect(screen, LIGHT_GRAY, two_board_button)
         else:
             pygame.draw.rect(screen, DARK_GRAY, two_board_button)
+
+        #multiplayer
+        #if choice == 3 or choice == 4:
+            #pygame.draw.rect(screen, ORANGE, multiplayer_button)
+        #elif multiplayer_button.collidepoint(mouse):
+            #pygame.draw.rect(screen, LIGHT_GRAY, multiplayer_button)
+        #else:
+            #pygame.draw.rect(screen, DARK_GRAY, multiplayer_button)
+
         #two player/1v1
-        if choice == 3:
-            pygame.draw.rect(screen, GREEN, two_player_button)
-        elif two_player_button.collidepoint(mouse):
-            pygame.draw.rect(screen, LIGHT_GRAY, two_player_button)
-        else:
-            pygame.draw.rect(screen, DARK_GRAY, two_player_button)
+        #if choice == 3:
+            #pygame.draw.rect(screen, GREEN, two_player_button)
+        #elif two_player_button.collidepoint(mouse):
+            #pygame.draw.rect(screen, LIGHT_GRAY, two_player_button)
+        #else:
+            #pygame.draw.rect(screen, DARK_GRAY, two_player_button)
         #three player/1v1v1
-        if choice == 4:
-            pygame.draw.rect(screen, GREEN, three_player_button)
-        elif three_player_button.collidepoint(mouse):
-            pygame.draw.rect(screen, LIGHT_GRAY, three_player_button)
+        #if choice == 4:
+            #pygame.draw.rect(screen, GREEN, three_player_button)
+        #elif three_player_button.collidepoint(mouse):
+            #pygame.draw.rect(screen, LIGHT_GRAY, three_player_button)
+        #else:
+            #pygame.draw.rect(screen, DARK_GRAY, three_player_button)
+
+        if additional_ships:
+            pygame.draw.rect(screen, GREEN, additional_ships_button)
+            pygame.draw.rect(screen, GREEN, additional_ships_on_button)
+            if additional_ships_off_button.collidepoint(mouse):
+                pygame.draw.rect(screen, LIGHT_GRAY, additional_ships_off_button)
+            else:
+                pygame.draw.rect(screen, DARK_GRAY, additional_ships_off_button)
         else:
-            pygame.draw.rect(screen, DARK_GRAY, three_player_button)
+            pygame.draw.rect(screen, RED, additional_ships_button)
+            pygame.draw.rect(screen, RED, additional_ships_off_button)
+            if additional_ships_on_button.collidepoint(mouse):
+                pygame.draw.rect(screen, LIGHT_GRAY, additional_ships_on_button)
+            else:
+                pygame.draw.rect(screen, DARK_GRAY, additional_ships_on_button)
 
         #debug
         if debug:
@@ -790,13 +879,18 @@ def settings_screen(screen):
         screen.blit(back_text, (65,30))
 
         screen.blit(singleplayer_text, (90,175))
-        screen.blit(multiplayer_text, (100,325))
 
         screen.blit(one_board_text, (525,175))
         screen.blit(two_board_text, (765,175))
 
-        screen.blit(two_player_text, (555,325))
-        screen.blit(three_player_text, (765,325))
+        #screen.blit(multiplayer_text, (100,325))
+
+        #screen.blit(two_player_text, (555,325))
+        #screen.blit(three_player_text, (765,325))
+
+        screen.blit(additional_ships_text, (52, 325))
+        screen.blit(additional_ships_off_text, (580, 325))
+        screen.blit(additional_ships_on_text, (835, 325))
 
         screen.blit(debug_text, (150, 625))
         screen.blit(debug_off_text, (580, 625))
@@ -813,6 +907,43 @@ def settings_screen(screen):
 
 
 
+def instructions_screen(screen):
+
+    screen.fill(BLACK)
+
+    #for the back button
+    button_font = pygame.font.SysFont('arial', 50)
+    back_text = button_font.render('back', True, WHITE)
+
+    back_button = pygame.Rect(20,20,200,75)
+
+    while True:
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            #checks if a mouse is clicked
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+
+                if back_button.collidepoint(mouse_pos):
+                    return GameState.TITLE
+
+        #get mouse position
+        mouse = pygame.mouse.get_pos()
+
+        #draw buttons
+        if back_button.collidepoint(mouse):
+            pygame.draw.rect(screen, LIGHT_GRAY, back_button)
+        else:
+            pygame.draw.rect(screen, DARK_GRAY, back_button)
+
+        screen.blit(back_text, (65,30))
+
+        pygame.display.update()
+
 
 class GameState(Enum):
     GAME_OVER = -2
@@ -823,6 +954,7 @@ class GameState(Enum):
     AI_PLACE_SHIPS = 3
     P1_TURN = 4
     P2_AI_TURN = 5
+    INSTRUCTIONS = 6
 
 if __name__ == "__main__":
     main()
