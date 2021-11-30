@@ -915,6 +915,21 @@ def instructions_screen(screen):
     button_font = pygame.font.SysFont('arial', 50)
     back_text = button_font.render('back', True, WHITE)
 
+    text_font = pygame.font.SysFont('arial', 40)
+
+    line1_text = text_font.render('There are 5 ships of lengths 2,3,3,4,5', True, WHITE)
+    line2_text = text_font.render('Placing a ship has 3 steps:', True, WHITE)
+    line3_text = text_font.render('1. Select ship number (correspondes with length)', True, WHITE)
+    line4_text = text_font.render('2. Press h for horizontal or v for vertical', True, WHITE)
+    line5_text = text_font.render('3. Click to place the ship', True, WHITE)
+    line6_text = text_font.render('When done placing all ships press d to confirm', True, WHITE)
+    line7_text = text_font.render('A blank (or filled in if debug is on) grid will appear', True, WHITE)
+    line8_text = text_font.render('The player must press d again to begin the game', True, WHITE)
+    line9_text = text_font.render('Select a square to shoot and confirm by pressing d', True, WHITE)
+    line10_text = text_font.render('The players board will show with the enemy shot', True, WHITE)
+    line11_text = text_font.render('Player presses d to confirm enemy turn', True, WHITE)
+    line12_text = text_font.render('This process repeats until there is a winner', True, WHITE)
+
     back_button = pygame.Rect(20,20,200,75)
 
     while True:
@@ -941,6 +956,21 @@ def instructions_screen(screen):
             pygame.draw.rect(screen, DARK_GRAY, back_button)
 
         screen.blit(back_text, (65,30))
+
+        screen.blit(line1_text, (50,100))
+        screen.blit(line2_text, (50,160))
+
+        screen.blit(line3_text, (75,220))
+        screen.blit(line4_text, (75,270))
+        screen.blit(line5_text, (75,320))
+
+        screen.blit(line6_text, (50,380))
+        screen.blit(line7_text, (50,440))
+        screen.blit(line8_text, (50,500))
+        screen.blit(line9_text, (50,560))
+        screen.blit(line10_text, (50,620))
+        screen.blit(line11_text, (50,680))
+        screen.blit(line12_text, (50,740))
 
         pygame.display.update()
 
