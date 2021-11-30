@@ -28,8 +28,8 @@ difficulty_dict = {0:100, 1:60, 2:30, 3:17}
 
 #these probably shouldnt be global but im not gonna change that
 # This sets the WIDTH and HEIGHT of each grid location
-WIDTH = 90
-HEIGHT = 90
+WIDTH = 70
+HEIGHT = 70
 
 # This sets the margin between each cell
 MARGIN = 10
@@ -98,7 +98,7 @@ def main():
 def title_screen(screen):
 
     #background title screen if not work change reference to local
-    bg_title = pygame.image.load(r"C:\Users\resur\OneDrive\Documents\School\CS 3100\group6-cs3100\title_art.png")
+    bg_title = pygame.image.load(r"C:\Users\jchri\Documents\S&T\FALL 21\CS 3100\Project Code\group6-cs3100\title_art.png")
 
     # defining a font
     smallfont = pygame.font.SysFont('Corbel',35)
@@ -226,7 +226,7 @@ def place_ships_screen(screen, p1grid):
 
                     # Set that location to one
                     prev_values.append(p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])])
-                    p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = 1
+                    p1grid[row + (spot * ship_orientation[0])][column + (spot * ship_orientation[1])] = ship_len
                     print("Click ", pos, "Grid coordinates: ", row, column)
                     if prev_values[spot] == 1: # overlap is detected
                         overlap_flag = True
@@ -273,22 +273,70 @@ def place_ships_screen(screen, p1grid):
 
         # Set the screen background
         screen.fill(BLACK)
-
+        
         # Draw the grid
+
+        # Load ocean tile image here to avoid loading each loop
+        oceanTile = pygame.image.load(r"C:\Users\jchri\Documents\S&T\FALL 21\CS 3100\Project Code\group6-cs3100\cs3100_Group-6 Ships\cs3100_oceanFloor.png")
+        carrier = []
+        battleship = []
+        submarine = []        
+        cruiser = []
+        destroyer = []
+        cruiserCount = 0 # counter for determining cruiser and sub placement
+        for ship in placeable_ships:
+            for i in range(ship):
+                if ship == 2: # Load destroyer images
+                    shipTile = pygame.image.load(r"C:\Users\jchri\Documents\S&T\FALL 21\CS 3100\Project Code\group6-cs3100\cs3100_Group-6 Ships\Destroyer\blue\destroyerBlue"+str(i)+r".png")
+                    destroyer.append(shipTile)
+                elif ship == 3: # Load cruiser images
+                    shipTile = pygame.image.load(r"C:\Users\jchri\Documents\S&T\FALL 21\CS 3100\Project Code\group6-cs3100\cs3100_Group-6 Ships\Cruiser\blue\cruiserBlue"+str(i)+r".png")
+                    cruiser.append(shipTile)
+                    cruiserCount += 1
+                    if(cruiserCount >= 3): # Load submarine images
+                        shipTile = pygame.image.load(r"C:\Users\jchri\Documents\S&T\FALL 21\CS 3100\Project Code\group6-cs3100\cs3100_Group-6 Ships\Submarine\blue\subBlue"+str(i)+r".png")
+                        submarine.append(shipTile)
+                elif ship == 4: # Load battleship images
+                    shipTile = pygame.image.load(r"C:\Users\jchri\Documents\S&T\FALL 21\CS 3100\Project Code\group6-cs3100\cs3100_Group-6 Ships\Battleship\blue\battleshipBlue"+str(i)+r".png")
+                    battleship.append(shipTile)
+                else: # Load carrier images
+                    shipTile = pygame.image.load(r"C:\Users\jchri\Documents\S&T\FALL 21\CS 3100\Project Code\group6-cs3100\cs3100_Group-6 Ships\Carrier\blue\CarrierBlue"+str(i)+r".png")
+                    carrier.append(shipTile)
+        
+        carrierCount = 0
+        battleshipCount = 0
+        cruiserCount = 0
+        submarineCount = 0
+        destroyerCount = 0
         # if not all_ships_placed:
         for row in range(10):
             for column in range(10):
-                color = WHITE
-                if p1grid[row][column] == 1:
-                    color = GREEN
-                elif row == curr_row and column == curr_column:
-                    color = GRAY
-                pygame.draw.rect(screen,
-                                color,
-                                [(MARGIN + WIDTH) * column + MARGIN,
-                                (MARGIN + HEIGHT) * row + MARGIN,
-                                WIDTH,
-                                HEIGHT])
+                if p1grid[row][column] == 2:
+                    currTile = destroyer[destroyerCount]
+                    destroyerCount +=1
+                elif p1grid[row][column] == 3:
+                    currTile = cruiser[cruiserCount]
+                    cruiserCount += 1
+                    if(cruiserCount > 3):
+                        currTile = submarine[submarineCount]
+                        submarineCount += 1
+                elif p1grid[row][column] == 4:
+                    currTile = battleship[battleshipCount]
+                    battleshipCount += 1
+                elif p1grid[row][column] == 5:
+                    currTile = carrier[carrierCount]
+                    carrierCount += 1
+                else:
+                    currTile = oceanTile
+                
+                screen.blit(currTile, [(MARGIN + WIDTH) * column + MARGIN, (MARGIN + HEIGHT) * row + MARGIN, WIDTH, HEIGHT])
+                
+                #pygame.draw.rect(screen,
+                #                color,
+                #                [(MARGIN + WIDTH) * column + MARGIN,
+                #                (MARGIN + HEIGHT) * row + MARGIN,
+                #                WIDTH,
+                #                HEIGHT])
 
 
         pygame.display.update()
