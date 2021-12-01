@@ -2,7 +2,7 @@ import pygame
 import sys
 from enum import Enum
 import random
-import time
+# import time
 
 #defining all the colors
 WHITE = (255,255,255)
@@ -22,6 +22,7 @@ BLUE = (0,105,148)
 #I am going to follow the logic group and just make a choice var
 #default is singleplayer (1 board)
 choice = 2 #1 - One board, 2 - Two boards, 3 - PvP, 4 - PvPvP
+winner = ""
 debug = False #i dont know why this was default true so I changed it
 additional_ships = False #xtra criteria
 difficulty = 3 #0 - Easy, 1 - Normal, 2 - Hard, 3 - Impossible
@@ -36,6 +37,7 @@ HEIGHT = 90
 MARGIN = 10
 
 def main():
+    global winner
     pygame.init()
 
     #doing fps so my computer doesnt catch on fire
@@ -49,7 +51,6 @@ def main():
 
     p1grid = []
     oppgrid = []
-    winner = ""
 
     while True:
         clock.tick(fps)
@@ -64,6 +65,8 @@ def main():
             if game_state == GameState.P1_TURN:
                 for turn in range(difficulty_dict[difficulty]):
                     game_state = p1_turn(screen, oppgrid)
+                    if game_state == GameState.GAME_OVER:
+                        break
                 if winner == "":
                     winner = "Tie"
                 game_state = GameState.GAME_OVER
@@ -76,8 +79,11 @@ def main():
                 game_state = create_ai_grid_screen(screen, oppgrid)
 
             if game_state == GameState.P1_TURN or game_state == GameState.P2_AI_TURN:
-                for turn in range(difficulty_dict[difficulty]*2):
-                    if turn%2 == 0 and game_state == GameState.P1_TURN: # Even turns is player one
+                turns = (difficulty_dict[difficulty]*2)+2 if additional_ships else difficulty_dict[difficulty]*2
+                for turn in range(turns):
+                    if game_state == GameState.GAME_OVER:
+                        break
+                    elif turn%2 == 0 and game_state == GameState.P1_TURN: # Even turns is player one
                         game_state = p1_turn(screen, oppgrid)
                     elif turn%2 == 1 and game_state == GameState.P2_AI_TURN: # Odd turns is player two/AI
                         game_state = p2_ai_turn(screen, p1grid)
@@ -102,7 +108,7 @@ def main():
 def title_screen(screen):
 
     #background title screen if not work change reference to local
-    bg_title = pygame.image.load(r"C:\Users\resur\OneDrive\Documents\School\CS 3100\group6-cs3100\title_art.png")
+    bg_title = pygame.image.load(r"title_art.png")
 
     # defining a font
     smallfont = pygame.font.SysFont('Corbel',35)
@@ -198,7 +204,7 @@ def place_ships_screen(screen, p1grid):
     curr_row = 10
 
     # Information on ship being placed
-    placeable_ships = [2, 3, 3, 4, 5]
+    placeable_ships = [1, 2, 3, 3, 4, 5] if additional_ships else [2, 3, 3, 4, 5]
     ship_len = 0
     ship_orientation = [0, 0]
 
@@ -324,7 +330,7 @@ def create_ai_grid_screen(screen, aigrid):
 
     # Dropping some real quick logic for placing ships
     #   Information on ship being placed
-    placeable_ships = [2, 3, 3, 4, 5]
+    placeable_ships = [1, 2, 3, 3, 4, 5] if additional_ships else [2, 3, 3, 4, 5]
     ship_len = 0
     ship_orientation = [0, 0]
     overlap = False
@@ -396,6 +402,7 @@ def create_ai_grid_screen(screen, aigrid):
         pygame.display.update()
 
 def p1_turn(screen, aigrid):
+    global winner
     print("Entering p1 turn")
     WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
     screen = pygame.display.set_mode(WINDOW_SIZE)
@@ -445,10 +452,8 @@ def p1_turn(screen, aigrid):
                         return GameState.GAME_OVER
                     else:
                         if choice == 1:
-                            time.sleep(1)
                             return GameState.P1_TURN
                         elif choice == 2:
-                            time.sleep(2) # A small delay so they can see what they've done
                             return GameState.P2_AI_TURN
 
         # Set the screen background
@@ -481,6 +486,7 @@ def p1_turn(screen, aigrid):
         pygame.display.update()
 
 def p2_ai_turn(screen, p1grid):
+    global winner
     print("Entering p2/ai turn")
     WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
     screen = pygame.display.set_mode(WINDOW_SIZE)
@@ -547,61 +553,21 @@ def p2_ai_turn(screen, p1grid):
         pygame.display.update()
 
 def game_end_screen(screen):
-    # WINDOW_SIZE = [WIDTH*10+MARGIN*10, HEIGHT*10+MARGIN*10]
-    # screen = pygame.display.set_mode(WINDOW_SIZE)
-    # pygame.font.init()
-
-    # myfont = pygame.font.SysFont('Comic Sans MS', 30)
-
-    # if winner == "P1":
-    #     text = myfont.render("Congratulations! P1 has won!", False, (0, 0, 0))
-    # elif winner == "P2/AI":
-    #     text = myfont.render("Sorry, P2/AI won this time, but try again!", False, (0, 0, 0))
-    # elif winner = "Tie":
-    #     text = myfont.render("Whoa, a tie! Nobody managed to sink all of their opponent's ships.", False, (0, 0, 0))
-
-    # textRect = text.get_rect()
-
-    # # set the center of the rectangular object.
-    # textRect.center = (WINDOW_SIZE[0] // 2, WINDOW_SIZE[1] // 2)
-
-    # # infinite loop
-    # while True:
-
-    #     # completely fill the surface object
-    #     # with white color
-    #     screen.fill(BLACK)
-
-    #     # copying the text surface object
-    #     # to the display surface object
-    #     # at the center coordinate.
-    #     screen.blit(text, textRect)
-
-    #     # iterate over the list of Event objects
-    #     # that was returned by pygame.event.get() method.
-    #     for event in pygame.event.get():
-
-    #         # if event object type is QUIT
-    #         # then quitting the pygame
-    #         # and program both.
-    #         if event.type == pygame.QUIT:
-
-    #             # deactivates the pygame library
-    #             pygame.quit()
-
-    #             # quit the program.
-    #             quit()
-
-    #         # Draws the surface object to the screen.
-    #         pygame.display.update()
-
-    #IM JUST GONNA LEAVE ALL THAT FOR NOW
+    global winner
     screen.fill(BLACK)
 
     game_over_font = pygame.font.SysFont('verdana', 130, bold=True)
     button_font = pygame.font.SysFont('arial', 50)
-
-    game_over_text = game_over_font.render('Game Over', True, RED)
+    print("\t\t\t\t" + winner)
+    if winner == "P1":
+        game_over_text = game_over_font.render('Nice!', True, RED)
+        game_over_text2 = game_over_font.render('You won!', True, RED)
+    elif winner == "P2/AI":
+        game_over_text = game_over_font.render('AI wins,', True, RED)
+        game_over_text2 = game_over_font.render('try again!', True, RED)
+    elif winner == "Tie":
+        game_over_text = game_over_font.render('Nice', True, RED)
+        game_over_text2 = game_over_font.render('a tie!', True, RED)
 
     back_text = button_font.render('Title', True, WHITE)
 
@@ -619,6 +585,7 @@ def game_end_screen(screen):
                 mouse_pos = event.pos
 
                 if back_button.collidepoint(mouse_pos):
+                    winner = ""
                     return GameState.TITLE
 
         #get mouse position
@@ -633,6 +600,7 @@ def game_end_screen(screen):
         screen.blit(back_text, (450,660))
 
         screen.blit(game_over_text, (100,350))
+        screen.blit(game_over_text2, (100,475))
 
         pygame.display.update()
 
