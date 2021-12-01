@@ -93,6 +93,8 @@ def main():
 
         if game_state == GameState.GAME_OVER:
             game_state = game_end_screen(screen)
+            p1grid = []
+            oppgrid = []
 
         if game_state == GameState.SETTINGS:
             game_state = settings_screen(screen)
@@ -604,8 +606,6 @@ def game_end_screen(screen):
 
         pygame.display.update()
 
-
-
 def settings_screen(screen):
     #must do this to change global variables without making them local
     global choice, debug, difficulty, additional_ships
@@ -872,8 +872,6 @@ def settings_screen(screen):
 
 
         pygame.display.update()
-
-
 
 def instructions_screen(screen):
 
